@@ -268,7 +268,7 @@
         
         .logo-text {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 700;
             background: linear-gradient(135deg, var(--deep-maroon), var(--navy-blue));
             -webkit-background-clip: text;
@@ -395,6 +395,7 @@
             position: relative;
             overflow: hidden;
             background: linear-gradient(135deg, var(--soft-cream) 0%, #F8F4EA 100%);
+            padding-top: 80px;
         }
         
         .hero-content {
@@ -547,18 +548,22 @@
         }
         
         .mentor-avatar {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
             margin: 0 auto 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            font-size: 2.5rem;
-            font-weight: bold;
+            overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 4px solid var(--soft-cream);
+        }
+        
+        .mentor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .mentor-info h3 {
@@ -645,7 +650,7 @@
         }
         
         .founder-image {
-            height: 300px;
+            height: 400px;
             border-radius: 16px;
             position: relative;
             overflow: hidden;
@@ -657,10 +662,10 @@
         }
         
         .founder-image img {
-            width: 85%;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             border-radius: 12px;
-            object-fit: contain;
         }
         
         .founder-info h3 {
@@ -1440,9 +1445,97 @@
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 767px) {
+            /* Mobile-specific fixes */
+            nav ul {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .header-actions .courses-dropdown {
+                display: none;
+            }
+            
+            .hero {
+                padding-top: 100px;
+                text-align: center;
+            }
+            
             .hero h1 {
                 font-size: 2.2rem;
+                text-align: center;
+            }
+            
+            .hero p {
+                text-align: center;
+            }
+            
+            .hero-btns {
+                justify-content: center;
+            }
+            
+            .trust-strip {
+                justify-content: center;
+            }
+            
+            .trust-item {
+                flex: 1;
+                min-width: 150px;
+                justify-content: center;
+            }
+            
+            .about-actions {
+                justify-content: center;
+            }
+            
+            .free-class-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .founder-quote {
+                font-size: 1rem;
+            }
+            
+            .whatsapp-feature {
+                padding: 20px;
+            }
+            
+            .footer-content {
+                text-align: center;
+            }
+            
+            .footer-contact p {
+                justify-content: center;
+            }
+            
+            .social-icons {
+                justify-content: center;
+            }
+            
+            .shape-1, .shape-2, .shape-3 {
+                display: none;
+            }
+            
+            /* Mobile logo size */
+            .logo-text {
+                font-size: 18px;
+            }
+            
+            /* Mobile mentor avatar size */
+            .mentor-avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
             }
             
             .section-title h2 {
@@ -1455,10 +1548,6 @@
                 min-height: 44px;
             }
             
-            .header-actions {
-                gap: 8px;
-            }
-            
             .trust-item {
                 font-size: 0.8rem;
                 padding: 10px 14px;
@@ -1466,14 +1555,23 @@
             
             .hero-btns {
                 flex-direction: column;
+                align-items: center;
             }
             
             .about-actions {
                 flex-direction: column;
+                align-items: center;
             }
             
-            .shape-1, .shape-2, .shape-3 {
-                display: none;
+            /* Small mobile logo size */
+            .logo-text {
+                font-size: 16px;
+            }
+            
+            /* Small mobile mentor avatar size */
+            .mentor-avatar {
+                width: 100px;
+                height: 100px;
             }
         }
     </style>
@@ -1555,6 +1653,21 @@
             <li><a href="#methodology">Methodology</a></li>
             <li><a href="#testimonials">Success Stories</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li class="mobile-courses">
+                <a href="https://wa.me/917795606528?text=Hi,%20I'm%20interested%20in%20joining%20Pariksha%20Parikrama">
+                    <i class="fas fa-graduation-cap"></i> KSET Preparation
+                </a>
+            </li>
+            <li class="mobile-courses">
+                <a href="https://wa.me/917795606528?text=Hi,%20I'm%20interested%20in%20joining%20Pariksha%20Parikrama">
+                    <i class="fas fa-book-open"></i> UGC-NET
+                </a>
+            </li>
+            <li class="mobile-courses">
+                <a href="https://wa.me/917795606528?text=Hi,%20I'm%20interested%20in%20joining%20Pariksha%20Parikrama">
+                    <i class="fas fa-chalkboard-teacher"></i> TET
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -1720,30 +1833,42 @@
             </div>
             <div class="mentor-cards">
                 <div class="mentor-card">
-                    <div class="mentor-avatar">JD</div>
+                    <a href="mentor-narayanaswamy.jpg" target="_blank">
+                        <div class="mentor-avatar">
+                            <img src="mentor-narayanaswamy.jpg" alt="Prof. Narayanaswamy">
+                        </div>
+                    </a>
                     <div class="mentor-info">
-                        <h3>Prof. Narayanaswamy .</h3>
-                        <div class="title"> Assistant Professor</div>
-                        <div class="bio"> M A in English from Bangalore University with NET and KSET qualifications With 25 years+ of experience in English Language and Literature .</div>
-                        <a href="#" class="btn btn-secondary">View Profile</a>
+                        <h3>Prof. Narayanaswamy</h3>
+                        <div class="title">Assistant Professor</div>
+                        <div class="bio">M A in English from Bangalore University with NET and KSET qualifications. With 25+ years of experience in English Language and Literature.</div>
+                        <a href="mentor-narayanaswamy-profile.html" class="btn btn-secondary">View Profile</a>
                     </div>
                 </div>
                 <div class="mentor-card">
-                    <div class="mentor-avatar">RS</div>
+                    <a href="mentor-yogananda-rao.jpg" target="_blank">
+                        <div class="mentor-avatar">
+                            <img src="mentor-yogananda-rao.jpg" alt="Prof. D Yogananda Rao">
+                        </div>
+                    </a>
                     <div class="mentor-info">
-                        <h3>Prof. D Yogananda Rao.</h3>
+                        <h3>Prof. D Yogananda Rao</h3>
                         <div class="title">M Phil and PhD research</div>
-                        <div class="bio">English at both Under-graduate and Post- graduate levels in well-known colleges & universities in Bangalore for over 36 years.</div>
-                        <a href="#" class="btn btn-secondary">View Profile</a>
+                        <div class="bio">English at both Under-graduate and Post-graduate levels in well-known colleges & universities in Bangalore for over 36 years.</div>
+                        <a href="mentor-yogananda-rao-profile.html" class="btn btn-secondary">View Profile</a>
                     </div>
                 </div>
                 <div class="mentor-card">
-                    <div class="mentor-avatar">AS</div>
+                    <a href="mentor-yashavantha.jpg" target="_blank">
+                        <div class="mentor-avatar">
+                            <img src="mentor-yashavantha.jpg" alt="Dr. Yashavantha T.S.">
+                        </div>
+                    </a>
                     <div class="mentor-info">
                         <h3>Dr. Yashavantha T.S.</h3>
                         <div class="title">Assistant Professor of English</div>
-                        <div class="bio">cleared multiple national-level examinations, including the UGC-NET, Junior Research Fellowship, and K-SET, and has nearly a decade to of teaching experience in various Universities and Colleges.</div>
-                        <a href="#" class="btn btn-secondary">View Profile</a>
+                        <div class="bio">Cleared multiple national-level examinations, including the UGC-NET, Junior Research Fellowship, and K-SET, and has nearly a decade of teaching experience in various Universities and Colleges.</div>
+                        <a href="mentor-yashavantha-profile.html" class="btn btn-secondary">View Profile</a>
                     </div>
                 </div>
             </div>
@@ -1759,7 +1884,7 @@
             </div>
             <div class="founder-content">
                 <div class="founder-image">
-                    <img src="jevith.jpeg" alt="Dr. Jeevith D. - Founder of Pariksha Parikrama">
+                    <img src="jevith.jpeg" alt="Dr. Jeevith N. - Founder of Pariksha Parikrama">
                 </div>
                 <div class="founder-info">
                     <h3>Dr. Jeevith N.</h3>
