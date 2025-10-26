@@ -48,23 +48,25 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 20px;
         }
         
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            padding: 12px 24px;
+            padding: 14px 24px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
             border: none;
-            font-size: 0.9rem;
+            font-size: 1rem;
             position: relative;
             overflow: hidden;
+            min-height: 50px;
         }
         
         .btn::before {
@@ -106,18 +108,18 @@
         }
         
         section {
-            padding: 100px 0;
+            padding: 80px 0;
             position: relative;
         }
         
         .section-title {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 50px;
             position: relative;
         }
         
         .section-title h2 {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -125,7 +127,7 @@
         }
         
         .section-title p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--medium-gray);
             max-width: 600px;
             margin: 0 auto;
@@ -163,8 +165,8 @@
         }
         
         .bg-element:nth-child(1) {
-            width: 300px;
-            height: 300px;
+            width: 200px;
+            height: 200px;
             top: 10%;
             left: 5%;
             background: radial-gradient(circle, var(--warm-gold), transparent);
@@ -172,8 +174,8 @@
         }
         
         .bg-element:nth-child(2) {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             top: 60%;
             right: 10%;
             background: radial-gradient(circle, var(--deep-maroon), transparent);
@@ -181,8 +183,8 @@
         }
         
         .bg-element:nth-child(3) {
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             bottom: 20%;
             left: 20%;
             background: radial-gradient(circle, var(--navy-blue), transparent);
@@ -208,8 +210,8 @@
         }
         
         .shape-1 {
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             top: 15%;
             right: 15%;
             background: var(--deep-maroon);
@@ -218,8 +220,8 @@
         }
         
         .shape-2 {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             bottom: 25%;
             left: 10%;
             background: var(--navy-blue);
@@ -229,8 +231,8 @@
         }
         
         .shape-3 {
-            width: 100px;
-            height: 100px;
+            width: 70px;
+            height: 70px;
             top: 70%;
             right: 25%;
             background: var(--warm-gold);
@@ -266,7 +268,7 @@
         
         .logo-text {
             font-family: 'Playfair Display', serif;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             background: linear-gradient(135deg, var(--deep-maroon), var(--navy-blue));
             -webkit-background-clip: text;
@@ -378,9 +380,11 @@
         
         .mobile-menu {
             display: none;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             color: var(--dark-text);
+            padding: 5px;
+            z-index: 1002;
         }
         
         /* Enhanced Hero Section */
@@ -394,13 +398,13 @@
         }
         
         .hero-content {
-            max-width: 650px;
+            max-width: 100%;
             z-index: 2;
             position: relative;
         }
         
         .hero h1 {
-            font-size: 3.8rem;
+            font-size: 2.8rem;
             margin-bottom: 24px;
             line-height: 1.2;
             background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
@@ -410,7 +414,7 @@
         }
         
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 40px;
             color: var(--medium-gray);
             font-weight: 400;
@@ -419,30 +423,32 @@
         
         .hero-btns {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 50px;
+            flex-wrap: wrap;
         }
         
         .trust-strip {
             display: flex;
-            gap: 40px;
+            gap: 20px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .trust-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             background: var(--white);
-            padding: 12px 20px;
+            padding: 12px 16px;
             border-radius: 50px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         
         .trust-item i {
             color: var(--warm-gold);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .hero-bg {
@@ -462,8 +468,8 @@
         
         .about-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            grid-template-columns: 1fr;
+            gap: 40px;
             align-items: center;
         }
         
@@ -494,7 +500,7 @@
         }
         
         .about-image {
-            height: 400px;
+            height: 300px;
             border-radius: 16px;
             position: relative;
             overflow: hidden;
@@ -519,8 +525,8 @@
         
         .mentor-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 35px;
+            grid-template-columns: 1fr;
+            gap: 30px;
         }
         
         .mentor-card {
@@ -581,13 +587,12 @@
         
         .process-steps {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 30px;
             margin-top: 50px;
         }
         
         .process-step {
-            flex: 1;
             text-align: center;
             padding: 30px;
             background: var(--white);
@@ -634,13 +639,13 @@
         
         .founder-content {
             display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 50px;
+            grid-template-columns: 1fr;
+            gap: 40px;
             align-items: center;
         }
         
         .founder-image {
-            height: 400px;
+            height: 300px;
             border-radius: 16px;
             position: relative;
             overflow: hidden;
@@ -659,7 +664,7 @@
         }
         
         .founder-info h3 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 15px;
             color: var(--navy-blue);
         }
@@ -668,7 +673,7 @@
             color: var(--deep-maroon);
             font-weight: 600;
             margin-bottom: 20px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .founder-bio {
@@ -684,7 +689,7 @@
             border-left: 4px solid var(--warm-gold);
             padding-left: 20px;
             margin: 30px 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         /* FAQ Section */
@@ -707,7 +712,7 @@
         }
         
         .faq-question {
-            padding: 25px;
+            padding: 20px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
@@ -718,7 +723,7 @@
         }
         
         .faq-answer {
-            padding: 0 25px 25px;
+            padding: 0 20px 20px;
             color: var(--medium-gray);
             display: none;
             text-align: left;
@@ -746,17 +751,12 @@
         }
         
         .batch-header {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
-            color: var(--white);
-            padding: 20px;
-            font-weight: 600;
+            display: none;
         }
         
         .batch-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
             border-bottom: 1px solid rgba(233, 185, 73, 0.1);
             transition: all 0.3s ease;
@@ -768,6 +768,22 @@
         
         .batch-row:last-child {
             border-bottom: none;
+        }
+        
+        .batch-row > div {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .batch-row > div:last-child {
+            margin-bottom: 0;
+        }
+        
+        .batch-row > div::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--navy-blue);
         }
         
         .status-badge {
@@ -783,7 +799,7 @@
             color: #4CAF50;
         }
 
-         .status-closed {
+        .status-closed {
             background: rgba(223, 24, 34, 0.1);
             color: #ee0a0a;
         }
@@ -805,8 +821,8 @@
         }
         
         .whatsapp-icon {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #25D366, #128C7E);
             margin: 0 auto 30px;
@@ -814,7 +830,7 @@
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 3.5rem;
+            font-size: 3rem;
             box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
         }
         
@@ -823,20 +839,20 @@
         }
         
         .whatsapp-info h3 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             margin-bottom: 20px;
             color: var(--navy-blue);
         }
         
         .whatsapp-info p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--medium-gray);
             margin-bottom: 30px;
         }
         
         .whatsapp-features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 50px;
         }
@@ -862,8 +878,8 @@
         
         .course-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 35px;
+            grid-template-columns: 1fr;
+            gap: 30px;
         }
         
         .course-card {
@@ -935,8 +951,8 @@
         }
         
         .coming-soon-icon {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--warm-gold), var(--deep-maroon));
             margin: 0 auto 30px;
@@ -944,24 +960,24 @@
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 3rem;
+            font-size: 2.5rem;
         }
         
         .coming-soon-content h3 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             margin-bottom: 20px;
             color: var(--navy-blue);
         }
         
         .coming-soon-content p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--medium-gray);
             margin-bottom: 30px;
         }
         
         .upcoming-courses {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 30px;
             margin-top: 50px;
         }
@@ -988,13 +1004,13 @@
         
         .testimonial-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 35px;
+            grid-template-columns: 1fr;
+            gap: 30px;
         }
         
         .testimonial-card {
             background: var(--soft-cream);
-            padding: 35px;
+            padding: 30px;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             position: relative;
@@ -1068,7 +1084,7 @@
             background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
             color: var(--white);
             text-align: center;
-            padding: 120px 0;
+            padding: 80px 0;
             position: relative;
             overflow: hidden;
         }
@@ -1085,7 +1101,7 @@
         }
         
         .cta h2 {
-            font-size: 3rem;
+            font-size: 2.2rem;
             margin-bottom: 24px;
             position: relative;
             z-index: 1;
@@ -1094,7 +1110,7 @@
         .cta p {
             max-width: 650px;
             margin: 0 auto 40px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0.9;
             position: relative;
             z-index: 1;
@@ -1113,19 +1129,19 @@
         footer {
             background-color: var(--navy-blue);
             color: var(--white);
-            padding: 80px 0 30px;
+            padding: 60px 0 30px;
         }
         
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 50px;
+            grid-template-columns: 1fr;
+            gap: 40px;
             margin-bottom: 50px;
         }
         
         .footer-logo {
             font-family: 'Playfair Display', serif;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             margin-bottom: 20px;
         }
@@ -1264,115 +1280,163 @@
             to { transform: rotate(360deg); }
         }
         
+        /* Mobile Navigation Styles */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: var(--soft-cream);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+        }
+        
+        .mobile-nav.active {
+            right: 0;
+        }
+        
+        .mobile-nav ul {
+            list-style: none;
+        }
+        
+        .mobile-nav ul li {
+            margin-bottom: 15px;
+        }
+        
+        .mobile-nav ul li a {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .mobile-nav ul li a:hover {
+            background: var(--white);
+            color: var(--deep-maroon);
+        }
+        
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-text);
+        }
+        
         /* Responsive Enhancements */
-        @media (max-width: 992px) {
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 24px;
+            }
+            
+            .section-title h2 {
+                font-size: 2.5rem;
+            }
+            
             .hero h1 {
                 font-size: 3.2rem;
             }
             
-            .process-steps {
-                flex-direction: column;
-            }
-            
             .about-content, .founder-content {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
             
-            .section-title h2 {
-                font-size: 2.4rem;
+            .mentor-cards, .course-cards, .testimonial-cards {
+                grid-template-columns: repeat(2, 1fr);
             }
             
-            nav ul {
-                gap: 20px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            nav ul {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: var(--soft-cream);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-                gap: 15px;
+            .process-steps {
+                flex-direction: row;
             }
             
-            nav ul.show {
-                display: flex;
-            }
-            
-            .mobile-menu {
-                display: block;
-            }
-            
-            .hero h1 {
-                font-size: 2.6rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
-                gap: 16px;
-            }
-            
-            .hero-bg {
-                width: 70%;
-            }
-            
-            .trust-strip {
-                justify-content: center;
-                gap: 30px;
-            }
-            
-            .section-title h2 {
-                font-size: 2.2rem;
-            }
-            
-            .course-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .testimonial-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .mentor-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .batch-header, .batch-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
+            .whatsapp-features, .upcoming-courses {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .footer-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
+                grid-template-columns: repeat(2, 1fr);
             }
             
-            .header-actions {
-                gap: 10px;
+            .batch-header {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+                color: var(--white);
+                padding: 20px;
+                font-weight: 600;
             }
             
-            .courses-menu {
-                right: auto;
-                left: 0;
+            .batch-row {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                padding: 20px;
+                border-bottom: 1px solid rgba(233, 185, 73, 0.1);
             }
             
-            .about-actions {
-                justify-content: center;
+            .batch-row > div::before {
+                content: none;
             }
             
-            .shape-1, .shape-2, .shape-3 {
+            .batch-row > div {
+                margin-bottom: 0;
+                display: block;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .mobile-menu, .mobile-nav, .mobile-nav-overlay {
                 display: none;
+            }
+            
+            nav ul {
+                display: flex;
+            }
+            
+            .hero h1 {
+                font-size: 3.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.8rem;
+            }
+            
+            .mentor-cards, .course-cards, .testimonial-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .whatsapp-features, .upcoming-courses {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         
@@ -1386,12 +1450,30 @@
             }
             
             .btn {
-                padding: 10px 20px;
-                font-size: 0.85rem;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-height: 44px;
             }
             
             .header-actions {
                 gap: 8px;
+            }
+            
+            .trust-item {
+                font-size: 0.8rem;
+                padding: 10px 14px;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+            }
+            
+            .about-actions {
+                flex-direction: column;
+            }
+            
+            .shape-1, .shape-2, .shape-3 {
+                display: none;
             }
         }
     </style>
@@ -1458,6 +1540,23 @@
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+    <div class="mobile-nav" id="mobile-nav">
+        <div class="close-menu" id="close-menu">
+            <i class="fas fa-times"></i>
+        </div>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#courses">Courses</a></li>
+            <li><a href="#mentors">Mentors</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#testimonials">Success Stories</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -1738,22 +1837,22 @@
                     <div>Status</div>
                 </div>
                 <div class="batch-row">
-                    <div>KSET 2025 Intensive Program</div>
-                    <div>19 Oct 2025</div>
-                    <div>1 Months</div>
-                    <div><span class="status-badge status-closed">Closed</span></div>
+                    <div data-label="Course Name">KSET 2025 Intensive Program</div>
+                    <div data-label="Start Date">19 Oct 2025</div>
+                    <div data-label="Duration">1 Months</div>
+                    <div data-label="Status"><span class="status-badge status-closed">Closed</span></div>
                 </div>
                 <div class="batch-row">
-                    <div>UGC-NET Oct 2025 Batch</div>
-                    <div>31 Oct 2025</div>
-                    <div>2 Months</div>
-                    <div><span class="status-badge status-upcoming">Upcoming</span></div>
+                    <div data-label="Course Name">UGC-NET Oct 2025 Batch</div>
+                    <div data-label="Start Date">31 Oct 2025</div>
+                    <div data-label="Duration">2 Months</div>
+                    <div data-label="Status"><span class="status-badge status-upcoming">Upcoming</span></div>
                 </div>
                 <div class="batch-row">
-                    <div>TET</div>
-                    <div>2025</div>
-                    <div>1 Month</div>
-                    <div><span class="status-badge status-upcoming">Upcoming</span></div>
+                    <div data-label="Course Name">TET</div>
+                    <div data-label="Start Date">2025</div>
+                    <div data-label="Duration">1 Month</div>
+                    <div data-label="Status"><span class="status-badge status-upcoming">Upcoming</span></div>
                 </div>
             </div>
         </div>
@@ -1948,11 +2047,31 @@
     </footer>
 
     <script>
-        // Enhanced mobile menu toggle
-        document.getElementById('mobile-menu').addEventListener('click', function() {
-            const navMenu = document.getElementById('nav-menu');
-            navMenu.classList.toggle('show');
-            this.style.transform = navMenu.classList.contains('show') ? 'rotate(90deg)' : 'rotate(0deg)';
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const closeMenuBtn = document.getElementById('close-menu');
+        
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            mobileNavOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            mobileNavOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+        mobileNavOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
         });
         
         // Smooth scroll for anchor links with performance optimization
@@ -1968,10 +2087,6 @@
                             block: 'start'
                         });
                     });
-                    
-                    // Close mobile menu after clicking a link
-                    document.getElementById('nav-menu').classList.remove('show');
-                    document.getElementById('mobile-menu').style.transform = 'rotate(0deg)';
                 }
             });
         });
