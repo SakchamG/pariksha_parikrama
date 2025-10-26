@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Pariksha Parikrama | Guiding Minds, Shaping Futures</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --deep-maroon: #6B1E1E;
+            --navy-blue: #14213D;
+            --warm-gold: #E9B949;
+            --soft-cream: #FAF4E8;
+            --light-gray: #f8f9fa;
+            --dark-text: #2D3748;
+            --medium-gray: #718096;
+            --white: #FFFFFF;
+            --success-green: #4CAF50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-text);
+            background-color: var(--soft-cream);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--deep-maroon), #8B2C2C);
+            color: var(--white);
+            box-shadow: 0 8px 20px rgba(107, 30, 30, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--deep-maroon);
+            border: 2px solid var(--deep-maroon);
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--warm-gold), #F4C23B);
+            color: var(--navy-blue);
+            box-shadow: 0 8px 20px rgba(233, 185, 73, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: var(--medium-gray);
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--warm-gold), var(--deep-maroon));
+            margin: 24px auto;
+            border-radius: 2px;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(250, 244, 232, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 12px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--deep-maroon), var(--navy-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--warm-gold), var(--deep-maroon));
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        nav ul li a:hover {
+            color: var(--deep-maroon);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--dark-text);
+        }
+        
+        /* Hero Section */
+        .about-hero {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--soft-cream) 0%, #F8F4EA 100%);
+            margin-top: 70px;
+        }
+        
+        .about-hero-content {
+            max-width: 800px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .about-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: left;
+        }
+        
+        .about-hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: var(--medium-gray);
+            font-weight: 400;
+            text-align: left;
+        }
+        
+        .about-hero-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(233, 185, 73, 0.1) 0%, rgba(107, 30, 30, 0.1) 100%);
+            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+        
+        /* Our Story */
+        .our-story {
+            background-color: var(--white);
+        }
+        
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .story-text p {
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+        
+        .story-highlights {
+            margin-top: 30px;
+        }
+        
+        .highlight-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .highlight-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .highlight-list i {
+            color: var(--warm-gold);
+            font-size: 1.2rem;
+            margin-top: 3px;
+        }
+        
+        .story-image {
+            height: 400px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--soft-cream);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .story-image img {
+            width: 85%;
+            height: auto;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        
+        /* Mission Vision */
+        .mission-vision {
+            background-color: var(--light-gray);
+        }
+        
+        .mv-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .mv-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(233, 185, 73, 0.1);
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .mv-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .mv-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--warm-gold), var(--deep-maroon));
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+        }
+        
+        .mv-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--navy-blue);
+        }
+        
+        .mv-card p {
+            color: var(--medium-gray);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+        
+        /* Values */
+        .values {
+            background-color: var(--white);
+        }
+        
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .value-card {
+            background: var(--soft-cream);
+            padding: 35px 25px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(233, 185, 73, 0.1);
+        }
+        
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .value-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.8rem;
+        }
+        
+        .value-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--navy-blue);
+        }
+        
+        .value-card p {
+            color: var(--medium-gray);
+            font-size: 1rem;
+        }
+        
+        /* Team */
+        .team {
+            background-color: var(--light-gray);
+        }
+        
+        .team-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+        }
+        
+        .team-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(233, 185, 73, 0.1);
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2.5rem;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .team-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--navy-blue);
+        }
+        
+        .team-info .title {
+            color: var(--deep-maroon);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .team-info .bio {
+            color: var(--medium-gray);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .team-social {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .team-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--soft-cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--navy-blue);
+            transition: all 0.3s ease;
+        }
+        
+        .team-social a:hover {
+            background: var(--deep-maroon);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+        
+        /* Journey */
+        .journey {
+            background-color: var(--white);
+        }
+        
+        .journey-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--warm-gold), var(--deep-maroon));
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            width: 100%;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            padding-right: calc(50% + 30px);
+            text-align: right;
+        }
+        
+        .timeline-item:nth-child(even) {
+            padding-left: calc(50% + 30px);
+            text-align: left;
+        }
+        
+        .timeline-content {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: relative;
+            border: 1px solid rgba(233, 185, 73, 0.1);
+        }
+        
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: var(--warm-gold);
+            border-radius: 50%;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content::before {
+            right: -40px;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content::before {
+            left: -40px;
+        }
+        
+        .timeline-year {
+            font-weight: 700;
+            color: var(--deep-maroon);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--navy-blue);
+        }
+        
+        .timeline-content p {
+            color: var(--medium-gray);
+            font-size: 1rem;
+        }
+        
+        /* Stats */
+        .stats {
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            color: var(--white);
+            text-align: center;
+            padding: 80px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .stat-item {
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--warm-gold);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .stat-text {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            color: var(--white);
+            text-align: center;
+            padding: 120px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+            background-size: cover;
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta p {
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .demo-class {
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 50px;
+            margin-top: 20px;
+            display: inline-block;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--navy-blue);
+            color: var(--white);
+            padding: 80px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo span {
+            color: var(--warm-gold);
+        }
+        
+        .footer-quote {
+            font-style: italic;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.1rem;
+        }
+        
+        .footer-links h3 {
+            font-size: 1.3rem;
+            margin-bottom: 24px;
+            color: var(--warm-gold);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links ul li a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--white);
+            transform: translateX(5px);
+        }
+        
+        .footer-contact h3 {
+            font-size: 1.3rem;
+            margin-bottom: 24px;
+            color: var(--warm-gold);
+        }
+        
+        .footer-contact p {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .footer-contact i {
+            color: var(--warm-gold);
+            font-size: 1.1rem;
+            width: 20px;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 18px;
+            margin-top: 24px;
+        }
+        
+        .social-icons a {
+            color: var(--white);
+            font-size: 1.3rem;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--warm-gold);
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-hero h1 {
+                font-size: 3rem;
+            }
+            
+            .story-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title h2 {
+                font-size: 2.4rem;
+            }
+            
+            .journey-timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                padding-left: 70px;
+                padding-right: 0;
+                text-align: left;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content::before,
+            .timeline-item:nth-child(even) .timeline-content::before {
+                left: -40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--soft-cream);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                gap: 15px;
+            }
+            
+            nav ul.show {
+                display: flex;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .about-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .about-hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+            
+            .mv-cards, .values-grid, .team-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .about-hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-text">PARIKSHA <span>PARIKRAMA</span></div>
+            </div>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About Us</a></li>
+                    <li><a href="index.html#courses">Courses</a></li>
+                    <li><a href="index.html#mentors">Mentors</a></li>
+                    <li><a href="index.html#methodology">Methodology</a></li>
+                    <li><a href="index.html#testimonials">Success Stories</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <h1>Our Journey of Guiding Minds & Shaping Futures</h1>
+                <p>Discover the story behind Pariksha Parikrama - our mission, values, and the passionate team dedicated to transforming competitive exam preparation.</p>
+                <div class="hero-btns">
+                    <a href="#our-story" class="btn btn-primary">
+                        <i class="fas fa-book-open"></i> Our Story
+                    </a>
+                    <a href="#team" class="btn btn-secondary">
+                        <i class="fas fa-users"></i> Meet Our Team
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="about-hero-bg"></div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="our-story" id="our-story">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Story</h2>
+                <p>The journey of Pariksha Parikrama began with a vision to transform competitive exam preparation</p>
+            </div>
+            <div class="story-content">
+                <div class="story-text">
+                    <p>Founded in 2022 by Dr. Jeevith N., Pariksha Parikrama emerged from a simple yet powerful observation: traditional coaching methods were failing to address the unique needs and psychological challenges faced by competitive exam aspirants.</p>
+                    <p>The name "Pariksha Parikrama" symbolizes the sacred journey of preparation - a holistic approach that combines academic rigor with psychological well-being, strategic planning with personalized mentorship.</p>
+                    <p>What started as a small initiative with a handful of students has now transformed into a trusted institution that has guided hundreds of aspirants toward their dreams of qualifying for prestigious exams like KSET, UGC-NET, and various lecturer recruitment exams.</p>
+                    
+                    <div class="story-highlights">
+                        <h3>Why We're Different</h3>
+                        <ul class="highlight-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Personalized mentorship tailored to individual learning styles</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Integration of psychological principles with academic preparation</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Focus on building confidence alongside conceptual clarity</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Proven strategies that make competitive exams less competitive</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="story-image">
+                    <img src="logo.jpeg" alt="Pariksha Parikrama Story">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="mission-vision">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Mission & Vision</h2>
+                <p>Guiding principles that drive everything we do</p>
+            </div>
+            
+            <div class="mv-cards">
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>To transform competitive exam preparation through personalized mentorship, innovative teaching methodologies, and psychological support that empowers students to overcome exam anxiety and perform at their peak potential.</p>
+                </div>
+                
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To become the most trusted mentorship platform where every competitive exam aspirant finds not just academic guidance but holistic support that builds confidence, clarity, and career success.</p>
+                </div>
+                
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Our Promise</h3>
+                    <p>We commit to walking alongside every student in their preparation journey, providing unwavering support, expert guidance, and personalized strategies until they achieve their academic dreams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values -->
+    <section class="values">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Core Values</h2>
+                <p>The principles that guide our approach and decisions</p>
+            </div>
+            
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Student-Centric</h3>
+                    <p>Every decision we make prioritizes student success and well-being above all else.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Innovation</h3>
+                    <p>We continuously evolve our teaching methods to stay ahead of changing exam patterns.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Empathy</h3>
+                    <p>We understand the emotional journey of preparation and provide compassionate support.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Integrity</h3>
+                    <p>We maintain transparency and ethical standards in all our interactions and promises.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Excellence</h3>
+                    <p>We strive for the highest quality in content, delivery, and student outcomes.</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3>Collaboration</h3>
+                    <p>We believe in the power of collective growth - students, mentors, and institution together.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="team" id="team">
+        <div class="container">
+            <div class="section-title">
+                <h2>Meet Our Team</h2>
+                <p>The passionate educators and mentors behind Pariksha Parikrama</p>
+            </div>
+            
+            <div class="team-cards">
+                <div class="team-card">
+                    <div class="team-avatar">JD</div>
+                    <div class="team-info">
+                        <h3>Prof. Narayanaswamy .</h3>
+                        <div class="title"> Assistant Professor</div>
+                        <div class="bio"> M A in English from Bangalore University with NET and KSET qualifications With 25 years+ of experience in English Language and Literature .</div>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">RS</div>
+                    <div class="team-info">
+                       <h3>Prof. D Yogananda Rao.</h3>
+                        <div class="title">M Phil and PhD research</div>
+                        <div class="bio">English at both Under-graduate and Post- graduate levels in well-known colleges & universities in Bangalore for over 36 years.</div>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">AS</div>
+                    <div class="team-info">
+                       <h3>Dr. Yashavantha T.S.</h3>
+                        <div class="title">Assistant Professor of English</div>
+                        <div class="bio">cleared multiple national-level examinations, including the UGC-NET, Junior Research Fellowship, and K-SET, and has nearly a decade to of teaching experience in various Universities and Colleges.</div>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Journey -->
+    <section class="journey">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Journey</h2>
+                <p>Milestones in our growth and impact</p>
+            </div>
+            
+            <div class="journey-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2022</div>
+                        <h3>Foundation</h3>
+                        <p>Pariksha Parikrama was founded with a vision to transform competitive exam preparation through personalized mentorship.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Early 2023</div>
+                        <h3>First Success Stories</h3>
+                        <p>Our first batch of students achieved remarkable success in KSET and lecturer recruitment exams, validating our unique approach.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Mid 2024s</div>
+                        <h3>Expansion</h3>
+                        <p>We expanded our course offerings to include UGC-NET preparation and introduced our innovative 4-phase methodology.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Late 2025</div>
+                        <h3>Digital Transformation</h3>
+                        <p>Launched our online platform, making quality preparation accessible to students across Karnataka and beyond.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2026</div>
+                        <h3>Recognition & Growth</h3>
+                        <p>Aim to Crossed the milestone of guiding 500+ students with a success rate that established us as a trusted name in competitive exam coaching.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">238+</div>
+                    <div class="stat-text">Students Guided</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">92%</div>
+                    <div class="stat-text">Success Rate</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">8+</div>
+                    <div class="stat-text">Expert Faculty</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">12/7</div>
+                    <div class="stat-text">Doubt solving</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Join Our Growing Community</h2>
+            <p>Become part of the Pariksha Parikrama family and experience the difference that personalized mentorship can make in your preparation journey.</p>
+            <a href="https://wa.me/917795606528?text=Hi,%20I%20want%20to%20learn%20more%20about%20Pariksha%20Parikrama" class="btn btn-gold">
+                <i class="fas fa-rocket"></i> Start Your Journey
+            </a>
+            <div class="demo-class">
+                <i class="fas fa-gift"></i> First class free as demo after registration
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">PARIKSHA <span>PARIKRAMA</span></div>
+                    <p>Guiding minds, shaping futures through personalized mentorship for competitive exams with innovative teaching methodologies.</p>
+                    <div class="footer-quote">"Guiding minds, shaping futures."</div>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://wa.me/917795606528"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="about.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="index.html#courses"><i class="fas fa-chevron-right"></i> Courses</a></li>
+                        <li><a href="index.html#mentors"><i class="fas fa-chevron-right"></i> Mentors</a></li>
+                        <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 02/09 Alur BDA II Phase, Makali, Tumkur Road, Nelamangala, Bangalore – 562162</p>
+                    <p><i class="fas fa-phone"></i> 7795606528</p>
+                    <p><i class="fas fa-envelope"></i> parikshaparikrama@gmail.com</p>
+                    <p><i class="fas fa-clock"></i> Mon-Sun: 6:00 AM - 11:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Pariksha Parikrama. All rights reserved. | This website is managed by SK Group of Companies</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu').addEventListener('click', function() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.toggle('show');
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.padding = '8px 0';
+                header.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+            } else {
+                header.style.padding = '12px 0';
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.08)';
+            }
+        });
+    </script>
+</body>
+</html>
