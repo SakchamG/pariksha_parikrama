@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us — Pariksha Parikrama</title>
+    <meta name="description"
+        content="Get in touch with Pariksha Parikrama. Contact us for course enquiries, admission guidance, and support. Located in Nelamangala, Bangalore.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .page-hero {
+            min-height: 48vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--soft-cream), #EDE8DC);
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(233, 185, 73, 0.12), rgba(107, 30, 30, 0.1));
+            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero-content h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .contact-section {
+            background: var(--soft-cream);
+        }
+
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 48px;
+        }
+
+        .contact-info-card {
+            background: linear-gradient(145deg, var(--navy-blue), var(--deep-maroon));
+            border-radius: 24px;
+            padding: 48px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-info-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(233, 185, 73, 0.1);
+            border-radius: 50%;
+        }
+
+        .contact-info-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -30px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+        }
+
+        .contact-info-card h2 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-info-card p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-detail-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--warm-gold);
+            flex-shrink: 0;
+        }
+
+        .contact-detail-body h4 {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .contact-detail-body p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .contact-detail-body a {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .whatsapp-big {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #25D366;
+            color: white;
+            padding: 18px 24px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+            margin-top: 36px;
+        }
+
+        .whatsapp-big:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-big i {
+            font-size: 1.6rem;
+        }
+
+        .contact-form-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 48px 44px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .contact-form-card h2 {
+            font-size: 1.8rem;
+            color: var(--navy-blue);
+            margin-bottom: 8px;
+        }
+
+        .contact-form-card .sub {
+            color: var(--medium-gray);
+            margin-bottom: 32px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .working-hours {
+            background: var(--soft-cream);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 24px;
+        }
+
+        .working-hours h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--navy-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .working-hours h4 i {
+            color: var(--warm-gold);
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid #ece8e0;
+        }
+
+        .hours-row:last-child {
+            border-bottom: none;
+        }
+
+        .hours-row .day {
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .hours-row .time {
+            color: var(--medium-gray);
+        }
+
+        .success-msg {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .success-msg .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.12);
+            color: #16a34a;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .success-msg h3 {
+            font-size: 1.5rem;
+            color: var(--navy-blue);
+            margin-bottom: 10px;
+        }
+
+        .success-msg p {
+            color: var(--medium-gray);
+        }
+
+        @media (max-width: 992px) {
+            .contact-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form-card {
+                padding: 36px 28px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .form-row-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form-card {
+                padding: 28px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header" id="main-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo-text">PARIKSHA PARIKRAMA</a>
+                <nav class="site-nav">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="aboutus.html">About</a></li>
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="contact.html" class="active">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Student
+                        Login</a>
+                    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="mobile-nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="mobile-nav-close" onclick="closeMobileNav()"><i class="fas fa-times"></i></button>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="aboutus.html">About</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="login.html" class="btn btn-primary btn-sm" style="margin-top:16px;">Student Login</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <div class="badge badge-gold" style="margin-bottom:16px;"><i class="fas fa-headset"></i> Get In Touch
+                </div>
+                <h1>Contact Us</h1>
+                <p style="font-size:1.1rem;color:var(--medium-gray);">We're here to help with any queries about our
+                    courses, admissions, or support. Reach out anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-layout">
+                <!-- Contact Info -->
+                <div>
+                    <div class="contact-info-card">
+                        <h2>Let's Connect</h2>
+                        <p>Reach out via any channel that works best for you. We typically respond within the same
+                            business day.</p>
+
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="contact-detail-body">
+                                <h4>Our Address</h4>
+                                <p>Makali, Tumkur Road, Nelamangala<br>Bangalore – 562123, Karnataka</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon"><i class="fas fa-phone"></i></div>
+                            <div class="contact-detail-body">
+                                <h4>Phone</h4>
+                                <a href="tel:+917795606528">+91 7795606528</a>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-detail-body">
+                                <h4>Email</h4>
+                                <a href="mailto:parikshaparikrama@gmail.com">parikshaparikrama@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon"><i class="fas fa-clock"></i></div>
+                            <div class="contact-detail-body">
+                                <h4>Working Hours</h4>
+                                <p>Monday – Saturday: 9:00 AM – 9:00 PM<br>Sunday: Closed</p>
+                            </div>
+                        </div>
+
+                        <a href="https://wa.me/917795606528?text=Hi,%20I'm%20interested%20in%20Pariksha%20Parikrama%20courses"
+                            target="_blank" class="whatsapp-big">
+                            <i class="fab fa-whatsapp"></i>
+                            <div>
+                                <div style="font-size:0.78rem;opacity:0.85;margin-bottom:2px;">Quick Response on</div>
+                                <div>Chat with Us on WhatsApp</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Working Hours -->
+                    <div class="working-hours" style="margin-top:24px;">
+                        <h4><i class="fas fa-business-time"></i> Business Hours</h4>
+                        <div class="hours-row"><span class="day">Monday – Friday</span><span class="time">9:00 AM – 9:00
+                                PM</span></div>
+                        <div class="hours-row"><span class="day">Saturday</span><span class="time">9:00 AM – 9:00
+                                PM</span></div>
+                        <div class="hours-row"><span class="day">Sunday</span><span class="time">Closed</span></div>
+                    </div>
+                </div>
+                <!-- Contact Form Card -->
+                <div class="contact-form-card">
+                    <!-- Form Area -->
+                    <div id="form-area">
+                        <h2>Send Us a Message</h2>
+                        <p class="sub">Fill in the form and we'll get back to you within 24 hours.</p>
+                        <div id="form-alert" class="alert" style="display:none;"></div>
+                        <form id="contact-form" onsubmit="handleContactForm(event)">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input type="text" id="c-name" class="form-input" placeholder="Your full name"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Mobile Number <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input type="tel" id="c-mobile" class="form-input" placeholder="10-digit mobile"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="c-email" class="form-input" placeholder="your@email.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">I'm interested in</label>
+                                <select id="c-course" class="form-select">
+                                    <option value="">Select a course (optional)</option>
+                                    <option value="KSET">KSET Preparation</option>
+                                    <option value="UGC-NET">UGC-NET Preparation</option>
+                                    <option value="KARTET">KARTET Preparation</option>
+                                    <option value="Lecturers Exam">Lecturers Exam</option>
+                                    <option value="General Enquiry">General Enquiry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Message <span class="required">*</span></label>
+                                <textarea id="c-message" class="form-textarea" placeholder="Write your message here..."
+                                    rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-btn">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Success Message (Initially Hidden) -->
+                    <div class="success-msg" id="success-msg" style="display:none;">
+                        <div class="success-icon"><i class="fas fa-check"></i></div>
+                        <h3>Message Sent!</h3>
+                        <p>Thank you for reaching out. We'll get back to you shortly.</p>
+                        <a href="https://wa.me/917795606528" target="_blank" class="btn btn-primary"
+                            style="margin-top:24px;">
+                            <i class="fab fa-whatsapp"></i> Also Chat on WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">PARIKSHA <span>PARIKRAMA</span></div>
+                    <p>Guiding minds, shaping futures through personalised mentorship for competitive exams.</p>
+                    <div class="footer-socials">
+                        <a href="https://youtube.com/@parikshaparikrama" target="_blank"><i
+                                class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/parikshaparikrama" target="_blank"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/1Zv7dHxQeg/" target="_blank"><i
+                                class="fab fa-facebook"></i></a>
+                        <a href="https://wa.me/917795606528" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="aboutus.html"><i class="fas fa-chevron-right"></i> About</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Courses</a></li>
+                        <li><a href="contact.html"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        <li><a href="login.html"><i class="fas fa-chevron-right"></i> Student Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Courses</h4>
+                    <ul>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> KSET</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> UGC-NET</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> KARTET</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Lecturers Exam</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Makali, Tumkur Road,
+                            Nelamangala, Bangalore – 562123</span></div>
+                    <div class="footer-contact-item"><i class="fas fa-phone"></i><span>+91 7795606528</span></div>
+                    <div class="footer-contact-item"><i
+                            class="fas fa-envelope"></i><span>parikshaparikrama@gmail.com</span></div>
+                    <div class="footer-contact-item"><i class="fas fa-clock"></i><span>Mon–Sat: 9:00 AM – 9:00 PM</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Pariksha Parikrama. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script type="module">
+        import { submitContact } from './js/db.js';
+
+        window.handleContactForm = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            document.getElementById('form-alert').style.display = 'none';
+            try {
+                await submitContact({
+                    name: document.getElementById('c-name').value.trim(),
+                    mobile: document.getElementById('c-mobile').value.trim(),
+                    email: document.getElementById('c-email').value.trim(),
+                    course: document.getElementById('c-course').value,
+                    message: document.getElementById('c-message').value.trim()
+                });
+                document.getElementById('form-area').style.display = 'none';
+                document.getElementById('success-msg').style.display = 'block';
+            } catch (err) {
+                const al = document.getElementById('form-alert');
+                al.className = 'alert alert-error';
+                al.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send. Please try again or contact us on WhatsApp.';
+                al.style.display = 'flex';
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            }
+        };
+
+        window.toggleMobileNav = () => { document.getElementById('mobile-nav').classList.toggle('open'); document.getElementById('nav-overlay').classList.toggle('open'); };
+        window.closeMobileNav = () => { document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('nav-overlay').classList.remove('open'); };
+        window.addEventListener('scroll', () => { document.getElementById('main-header').style.padding = window.scrollY > 80 ? '8px 0' : '12px 0'; });
+    </script>
+</body>
+
+</html>

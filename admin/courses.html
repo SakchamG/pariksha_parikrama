@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management — Admin | Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .course-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .admin-course-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: var(--transition); }
+        .admin-course-card:hover { box-shadow: var(--shadow-md); }
+        .acc-header { height: 100px; background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon)); display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; }
+        .acc-header .icon { font-size: 2.5rem; color: rgba(255,255,255,0.2); }
+        .acc-header .cat-pill { background: rgba(233,185,73,0.85); color: var(--navy-blue); font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 50px; text-transform: uppercase; }
+        .acc-body { padding: 20px 22px; }
+        .acc-body h3 { font-size: 1.05rem; color: var(--navy-blue); margin-bottom: 8px; font-family: 'Inter', sans-serif; font-weight: 700; }
+        .acc-body p { font-size: 0.84rem; color: var(--medium-gray); margin-bottom: 16px; line-height: 1.5; }
+        .acc-meta { display: flex; gap: 14px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid #f5f5f5; }
+        .acc-meta span { font-size: 0.78rem; color: var(--medium-gray); display: flex; align-items: center; gap: 4px; }
+        .acc-meta i { color: var(--warm-gold); }
+        .acc-actions { display: flex; gap: 8px; }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html" class="active"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Course Management</h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <button class="btn btn-primary" onclick="openModal('add-modal')"><i class="fas fa-plus"></i> Add Course</button>
+                    <div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div>
+                </div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+                <div id="loading" class="loading-state"><div class="spinner"></div></div>
+                <div id="empty-state" class="empty-state" style="display:none;"><i class="fas fa-book"></i><h3>No Courses Yet</h3><p>Add your first course to get started.</p><button class="btn btn-primary" style="margin-top:16px;" onclick="openModal('add-modal')"><i class="fas fa-plus"></i> Add Course</button></div>
+                <div class="course-admin-grid" id="course-grid" style="display:none;"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div class="modal-overlay" id="add-modal">
+        <div class="modal">
+            <div class="modal-header"><h3>Add New Course</h3><button class="modal-close" onclick="closeModal('add-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="add-alert" class="alert" style="display:none;"></div>
+                <form id="add-form" onsubmit="handleAdd(event)">
+                    <div class="form-group"><label class="form-label">Course Title <span class="required">*</span></label><input type="text" id="add-title" class="form-input" placeholder="e.g. UGC-NET June 2026" required></div>
+                    <div class="form-group"><label class="form-label">Category <span class="required">*</span></label>
+                        <select id="add-category" class="form-select" required>
+                            <option value="">Select category</option>
+                            <option value="KSET">KSET</option>
+                            <option value="UGC-NET">UGC-NET</option>
+                            <option value="KARTET">KARTET</option>
+                            <option value="Lecturers Exam">Lecturers Exam</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea id="add-desc" class="form-textarea" placeholder="Brief course description..." rows="3"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('add-form').requestSubmit()" id="add-btn"><i class="fas fa-plus"></i> Add Course</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal">
+            <div class="modal-header"><h3>Edit Course</h3><button class="modal-close" onclick="closeModal('edit-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="edit-alert" class="alert" style="display:none;"></div>
+                <form id="edit-form" onsubmit="handleEdit(event)">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group"><label class="form-label">Course Title <span class="required">*</span></label><input type="text" id="edit-title" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Category <span class="required">*</span></label>
+                        <select id="edit-category" class="form-select" required>
+                            <option value="KSET">KSET</option>
+                            <option value="UGC-NET">UGC-NET</option>
+                            <option value="KARTET">KARTET</option>
+                            <option value="Lecturers Exam">Lecturers Exam</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea id="edit-desc" class="form-textarea" rows="3"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('edit-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('edit-form').requestSubmit()"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header"><h3>Delete Course</h3><button class="modal-close" onclick="closeModal('delete-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body"><div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> This will permanently delete the course and all its lectures and notes.</div><p>Delete <strong id="delete-course-name">this course</strong>?</p></div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button><button class="btn btn-danger" id="confirm-delete-btn"><i class="fas fa-trash"></i> Delete</button></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import { getCourses, addCourse, updateCourse, deleteCourse, getLectures, getCourseEnrollments } from '../js/db.js';
+        let allCourses = [];
+        const icons = {'KSET':'🎓','UGC-NET':'📘','KARTET':'📝','Lecturers Exam':'🏛️','General':'📚'};
+        function toast(msg,type='success'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className=`toast toast-${type}`;t.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
+        function showAlert(id,msg,type='error'){const el=document.getElementById(id);el.className=`alert alert-${type}`;el.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;el.style.display='flex';}
+
+        async function load() {
+            await requireAuth('admin','../login.html');
+            allCourses = await getCourses();
+            document.getElementById('loading').style.display='none';
+            await renderGrid();
+        }
+
+        async function renderGrid() {
+            const grid = document.getElementById('course-grid');
+            grid.innerHTML = '';
+            if (allCourses.length === 0) { grid.style.display='none'; document.getElementById('empty-state').style.display='block'; return; }
+            grid.style.display = 'grid';
+            document.getElementById('empty-state').style.display = 'none';
+            for (const c of allCourses) {
+                const lectures = await getLectures(c.id);
+                const enrollments = await getCourseEnrollments(c.id);
+                const card = document.createElement('div');
+                card.className = 'admin-course-card';
+                card.innerHTML = `
+                    <div class="acc-header"><span class="icon">${icons[c.category]||'📚'}</span><span class="cat-pill">${c.category||'General'}</span></div>
+                    <div class="acc-body">
+                        <h3>${c.title}</h3>
+                        <p>${c.description ? c.description.substring(0,80)+'...' : 'No description added.'}</p>
+                        <div class="acc-meta">
+                            <span><i class="fas fa-video"></i> ${lectures.length} Lectures</span>
+                            <span><i class="fas fa-users"></i> ${enrollments.length} Students</span>
+                        </div>
+                        <div class="acc-actions">
+                            <button class="btn btn-navy btn-sm" onclick="openEdit('${c.id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <a href="lectures.html?courseId=${c.id}" class="btn btn-gold btn-sm"><i class="fas fa-video"></i> Lectures</a>
+                            <button class="btn btn-danger btn-sm" onclick="openDelete('${c.id}','${c.title.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                grid.appendChild(card);
+            }
+        }
+
+        window.handleAdd = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('add-btn');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                await addCourse({ title: document.getElementById('add-title').value.trim(), category: document.getElementById('add-category').value, description: document.getElementById('add-desc').value.trim() });
+                closeModal('add-modal');
+                document.getElementById('add-form').reset();
+                allCourses = await getCourses();
+                await renderGrid();
+                toast('Course added!');
+            } catch(err) { showAlert('add-alert', err.message || 'Failed.'); }
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-plus"></i> Add Course';
+        };
+
+        window.openEdit = (id) => {
+            const c = allCourses.find(c=>c.id===id);
+            if (!c) return;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-title').value = c.title;
+            document.getElementById('edit-category').value = c.category;
+            document.getElementById('edit-desc').value = c.description || '';
+            document.getElementById('edit-alert').style.display = 'none';
+            openModal('edit-modal');
+        };
+
+        window.handleEdit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            try {
+                await updateCourse(id, { title: document.getElementById('edit-title').value.trim(), category: document.getElementById('edit-category').value, description: document.getElementById('edit-desc').value.trim() });
+                closeModal('edit-modal');
+                allCourses = await getCourses();
+                await renderGrid();
+                toast('Course updated!');
+            } catch(err) { showAlert('edit-alert', err.message || 'Failed.'); }
+        };
+
+        let deleteId = null;
+        window.openDelete = (id, name) => { deleteId = id; document.getElementById('delete-course-name').textContent = name; openModal('delete-modal'); };
+        document.getElementById('confirm-delete-btn').onclick = async () => {
+            if (!deleteId) return;
+            try {
+                await deleteCourse(deleteId);
+                allCourses = allCourses.filter(c=>c.id!==deleteId);
+                closeModal('delete-modal');
+                await renderGrid();
+                toast('Course deleted.');
+            } catch(e) { toast('Failed to delete.','error'); }
+        };
+
+        window.openModal = id => document.getElementById(id).classList.add('active');
+        window.closeModal = id => document.getElementById(id).classList.remove('active');
+        document.getElementById('logout-btn').addEventListener('click', async e => { e.preventDefault(); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        load();
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements — Admin | Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+
+        .ann-admin-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 22px 26px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--warm-gold);
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+
+        .ann-admin-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .ann-admin-card.urgent {
+            border-left-color: #ef4444;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.06);
+        }
+
+        .ann-admin-card.urgent:hover {
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12);
+        }
+
+        .ann-admin-card.info {
+            border-left-color: #3b82f6;
+        }
+
+        .ann-top h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Green [NEW] badge */
+        .badge-new {
+            background: rgba(34, 197, 94, 0.12);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 5px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-right: 2px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .ann-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ann-top h3 {
+            font-size: 1.05rem;
+            color: var(--navy-blue);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+        }
+
+        .ann-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ann-body-text {
+            font-size: 0.92rem;
+            color: var(--dark-text);
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .ann-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .ann-date-small {
+            font-size: 0.78rem;
+            color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ann-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ann-actions .btn {
+            font-size: 0.78rem;
+            padding: 6px 12px;
+            min-height: unset;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span>
+            </div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html" class="active"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Announcements</h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <button class="btn btn-primary" onclick="openModal('add-modal')"><i class="fas fa-plus"></i> Post
+                        Announcement</button>
+                    <div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div>
+                </div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+                <div id="loading" class="loading-state">
+                    <div class="spinner"></div>
+                </div>
+                <div id="ann-list"></div>
+                <div id="empty-state" class="empty-state" style="display:none;"><i class="fas fa-bullhorn"></i>
+                    <h3>No Announcements</h3>
+                    <p>Post your first announcement for students.</p><button class="btn btn-primary"
+                        style="margin-top:16px;" onclick="openModal('add-modal')"><i class="fas fa-plus"></i> Post
+                        Announcement</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Modal -->
+    <div class="modal-overlay" id="add-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Post Announcement</h3><button class="modal-close" onclick="closeModal('add-modal')"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="add-alert" class="alert" style="display:none;"></div>
+                <form id="add-form" onsubmit="handleAdd(event)">
+                    <div class="form-group"><label class="form-label">Title <span
+                                class="required">*</span></label><input type="text" id="add-title" class="form-input"
+                            placeholder="Announcement title..." required></div>
+                    <div class="form-group"><label class="form-label">Category</label>
+                        <select id="add-category" class="form-select">
+                            <option value="general">General</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="info">Info</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Message <span
+                                class="required">*</span></label><textarea id="add-body" class="form-textarea"
+                            placeholder="Write your announcement here..." rows="5" required></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary"
+                    onclick="closeModal('add-modal')">Cancel</button><button class="btn btn-primary"
+                    onclick="document.getElementById('add-form').requestSubmit()" id="add-btn"><i
+                        class="fas fa-bullhorn"></i> Post</button></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Announcement</h3><button class="modal-close" onclick="closeModal('edit-modal')"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="edit-alert" class="alert" style="display:none;"></div>
+                <form id="edit-form" onsubmit="handleEdit(event)">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group"><label class="form-label">Title <span
+                                class="required">*</span></label><input type="text" id="edit-title" class="form-input"
+                            required></div>
+                    <div class="form-group"><label class="form-label">Category</label>
+                        <select id="edit-category" class="form-select">
+                            <option value="general">General</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="info">Info</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Message <span
+                                class="required">*</span></label><textarea id="edit-body" class="form-textarea" rows="5"
+                            required></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary"
+                    onclick="closeModal('edit-modal')">Cancel</button><button class="btn btn-primary"
+                    onclick="document.getElementById('edit-form').requestSubmit()"><i class="fas fa-save"></i>
+                    Save</button></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm -->
+    <div class="modal-overlay" id="del-modal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Delete Announcement</h3><button class="modal-close" onclick="closeModal('del-modal')"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> This will permanently delete
+                    this announcement.</div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary"
+                    onclick="closeModal('del-modal')">Cancel</button><button class="btn btn-danger" id="confirm-del"><i
+                        class="fas fa-trash"></i> Delete</button></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import {
+            addAnnouncement,
+            updateAnnouncement,
+            deleteAnnouncement,
+            getAnnouncements,
+            createAnnouncement
+        } from '../js/db.js';
+
+        let allAnn = [];
+        function formatDate(ts) { if (!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
+        function toast(msg, type = 'success') { const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = `toast toast-${type}`; t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`; c.appendChild(t); setTimeout(() => t.remove(), 3500); }
+        function showAlert(id, msg, type = 'error') { const el = document.getElementById(id); el.className = `alert alert-${type}`; el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`; el.style.display = 'flex'; }
+        const catColors = { urgent: 'badge-error', info: 'badge-navy', general: 'badge-gold' };
+
+        function renderList() {
+            const c = document.getElementById('ann-list');
+            c.innerHTML = '';
+            if (allAnn.length === 0) { document.getElementById('empty-state').style.display = 'block'; return; }
+            document.getElementById('empty-state').style.display = 'none';
+            allAnn.forEach(a => {
+                const card = document.createElement('div');
+                card.className = `ann-admin-card${a.category && a.category !== 'general' ? ' ' + a.category : ''}`;
+                
+                // Posted within the last 24 hours
+                const isNew = a.createdAt && (Date.now() - (a.createdAt.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime()) < 24 * 60 * 60 * 1000);
+                const newBadge = isNew ? `<span class="badge-new">NEW</span>` : '';
+                
+                const urgentIcon = a.category === 'urgent' ? '<i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i> ' : '';
+                const categoryBadge = a.category ? `<span class="badge ${catColors[a.category] || 'badge-gold'}">${urgentIcon}${a.category.toUpperCase()}</span>` : `<span class="badge badge-gold">GENERAL</span>`;
+
+                card.innerHTML = `
+                    <div class="ann-top">
+                        <h3>${newBadge}${a.title}</h3>
+                        ${categoryBadge}
+                    </div>
+                    <div class="ann-body-text">${a.body || ''}</div>
+                    <div class="ann-footer">
+                        <span class="ann-date-small"><i class="fas fa-calendar"></i> ${formatDate(a.createdAt)}</span>
+                        <div class="ann-actions">
+                            <button class="btn btn-navy btn-sm" onclick="openEdit('${a.id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="openDel('${a.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                c.appendChild(card);
+            });
+        }
+
+        async function load() {
+            await requireAuth('admin', '../login.html');
+            allAnn = await getAnnouncements();
+            document.getElementById('loading').style.display = 'none';
+            renderList();
+        }
+
+        window.handleAdd = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('add-btn');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                await addAnnouncement({ title: document.getElementById('add-title').value.trim(), category: document.getElementById('add-category').value, body: document.getElementById('add-body').value.trim() });
+                closeModal('add-modal');
+                document.getElementById('add-form').reset();
+                allAnn = await getAnnouncements();
+                renderList();
+                toast('Announcement posted!');
+            } catch (err) { showAlert('add-alert', err.message || 'Failed.'); }
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-bullhorn"></i> Post';
+        };
+
+        window.openEdit = (id) => {
+            const a = allAnn.find(a => a.id === id);
+            if (!a) return;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-title').value = a.title;
+            document.getElementById('edit-category').value = a.category || 'general';
+            document.getElementById('edit-body').value = a.body || '';
+            document.getElementById('edit-alert').style.display = 'none';
+            openModal('edit-modal');
+        };
+
+        window.handleEdit = async (e) => {
+            e.preventDefault();
+            try {
+                await updateAnnouncement(document.getElementById('edit-id').value, { title: document.getElementById('edit-title').value.trim(), category: document.getElementById('edit-category').value, body: document.getElementById('edit-body').value.trim() });
+                closeModal('edit-modal');
+                allAnn = await getAnnouncements();
+                renderList();
+                toast('Updated!');
+            } catch (err) { showAlert('edit-alert', err.message || 'Failed.'); }
+        };
+
+        let delId = null;
+        window.openDel = id => { delId = id; openModal('del-modal'); };
+        document.getElementById('confirm-del').onclick = async () => {
+            if (!delId) return;
+            try { await deleteAnnouncement(delId); allAnn = allAnn.filter(a => a.id !== delId); closeModal('del-modal'); renderList(); toast('Deleted.'); }
+            catch (e) { toast('Failed.', 'error'); }
+        };
+
+        window.openModal = id => document.getElementById(id).classList.add('active');
+        window.closeModal = id => document.getElementById(id).classList.remove('active');
+        document.getElementById('logout-btn').addEventListener('click', async e => { e.preventDefault(); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        load();
+    </script>
+</body>
+
+</html>

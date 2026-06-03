@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management — Admin | Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .student-avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--deep-maroon),var(--navy-blue)); color:white; display:flex;align-items:center;justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+        .status-toggle { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+        .status-toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-track { width: 40px; height: 22px; background: #e2e8f0; border-radius: 11px; transition: background 0.3s; position: relative; }
+        .toggle-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .status-toggle input:checked + .toggle-track { background: #22c55e; }
+        .status-toggle input:checked + .toggle-track::after { transform: translateX(18px); }
+        .table-actions .btn { font-size: 0.78rem; padding: 6px 12px; min-height: unset; border-radius: 8px; }
+        .filter-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .enrollment-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+        .enrollment-chip { font-size: 0.72rem; padding: 3px 10px; background: rgba(20,33,61,0.08); color: var(--navy-blue); border-radius: 50px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html" class="active"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Student Management</h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div>
+                </div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+                <div class="dash-section-header">
+                    <h2>All Students</h2>
+                </div>
+                <!-- Filter Row -->
+                <div class="filter-row" style="margin-bottom:24px;">
+                    <div class="search-bar" style="max-width:280px;"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="Search students..." oninput="filterStudents()"></div>
+                    <select class="form-select" style="max-width:180px;" id="status-filter" onchange="filterStudents()">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <!-- Table -->
+                <div style="background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow:hidden;">
+                    <div id="loading" class="loading-state"><div class="spinner"></div></div>
+                    <div class="table-wrap" id="table-wrap" style="display:none;">
+                        <table>
+                            <thead><tr><th>Student</th><th>Contact</th><th>Mobile</th><th>Enrolled Courses</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+                            <tbody id="students-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="empty-state" class="empty-state" style="display:none;"><i class="fas fa-users"></i><h3>No Students Found</h3><p>No students match your search.</p></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header"><h3>Edit Student</h3><button class="modal-close" onclick="closeModal('edit-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="edit-alert" class="alert" style="display:none;"></div>
+                <form id="edit-form" onsubmit="saveEdit(event)">
+                    <input type="hidden" id="edit-uid">
+                    <div class="form-group"><label class="form-label">Full Name <span class="required">*</span></label><input type="text" id="edit-name" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Mobile Number <span class="required">*</span></label><input type="tel" id="edit-mobile" class="form-input" pattern="[0-9]{10}" required></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="edit-email" class="form-input" disabled style="background:#f8f9fa;cursor:not-allowed;"></div>
+                    <div class="form-group">
+                        <label class="form-label">Course Enrollments</label>
+                        <div id="enroll-checkboxes" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:200px;overflow-y:auto;padding:4px;"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('edit-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('edit-form').requestSubmit()"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header"><h3>Delete Student</h3><button class="modal-close" onclick="closeModal('delete-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> This will permanently delete the student and their data. This cannot be undone.</div>
+                <p style="font-size:0.95rem;">Are you sure you want to delete <strong id="delete-student-name">this student</strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import { getStudents, updateStudent, deleteStudent, setStudentActive, getCourses, getEnrollments, enrollStudent, unenrollStudent } from '../js/db.js';
+
+        let allStudents = [], allCourses = [], studentEnrollments = {};
+
+        function formatDate(ts) { if (!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+        function toast(msg, type='success') {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3500);
+        }
+
+        function showAlert(id, msg, type='error') {
+            const el = document.getElementById(id);
+            el.className = `alert alert-${type}`;
+            el.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+            el.style.display = 'flex';
+        }
+
+        async function loadData() {
+            await requireAuth('admin','../login.html');
+            [allStudents, allCourses] = await Promise.all([getStudents(), getCourses()]);
+            // Load enrollments for each student
+            for (const s of allStudents) {
+                const en = await getEnrollments(s.id);
+                studentEnrollments[s.id] = en.map(e => e.courseId);
+            }
+            document.getElementById('loading').style.display = 'none';
+            renderTable(allStudents);
+        }
+
+        function getCourseNames(studentId) {
+            const ids = studentEnrollments[studentId] || [];
+            return ids.map(id => allCourses.find(c => c.id === id)?.title || id);
+        }
+
+        function renderTable(students) {
+            const tbody = document.getElementById('students-tbody');
+            tbody.innerHTML = '';
+            if (students.length === 0) {
+                document.getElementById('table-wrap').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
+            document.getElementById('table-wrap').style.display = 'block';
+            document.getElementById('empty-state').style.display = 'none';
+            students.forEach(s => {
+                const courseNames = getCourseNames(s.id);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div style="display:flex;align-items:center;gap:12px;"><div class="student-avatar-sm">${s.name.charAt(0).toUpperCase()}</div><div><div style="font-weight:600;font-size:0.9rem;">${s.name}</div></div></div></td>
+                    <td style="font-size:0.88rem;">${s.email}</td>
+                    <td style="font-size:0.88rem;">${s.mobile || '—'}</td>
+                    <td><div class="enrollment-chips">${courseNames.length > 0 ? courseNames.map(n=>`<span class="enrollment-chip">${n}</span>`).join('') : '<span style="font-size:0.8rem;color:var(--medium-gray);">None</span>'}</div></td>
+                    <td>
+                        <label class="status-toggle" title="${s.isActive?'Deactivate':'Activate'} student">
+                            <input type="checkbox" ${s.isActive?'checked':''} onchange="toggleActive('${s.id}',this.checked)">
+                            <div class="toggle-track"></div>
+                        </label>
+                    </td>
+                    <td style="font-size:0.82rem;color:var(--medium-gray);">${formatDate(s.createdAt)}</td>
+                    <td><div class="table-actions"><button class="btn btn-navy btn-sm" onclick="openEdit('${s.id}')"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="openDelete('${s.id}','${s.name}')"><i class="fas fa-trash"></i></button></div></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.filterStudents = () => {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const status = document.getElementById('status-filter').value;
+            let filtered = allStudents.filter(s => {
+                const match = s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || (s.mobile||'').includes(q);
+                const statusMatch = status === 'all' || (status === 'active' && s.isActive) || (status === 'inactive' && !s.isActive);
+                return match && statusMatch;
+            });
+            renderTable(filtered);
+        };
+
+        window.toggleActive = async (uid, isActive) => {
+            try {
+                await setStudentActive(uid, isActive);
+                const s = allStudents.find(s => s.id === uid);
+                if (s) s.isActive = isActive;
+                toast(isActive ? 'Student activated.' : 'Student deactivated.', isActive ? 'success' : 'info');
+            } catch(e) { toast('Failed to update status.','error'); }
+        };
+
+        window.openEdit = (uid) => {
+            const s = allStudents.find(s => s.id === uid);
+            if (!s) return;
+            document.getElementById('edit-uid').value = uid;
+            document.getElementById('edit-name').value = s.name;
+            document.getElementById('edit-mobile').value = s.mobile || '';
+            document.getElementById('edit-email').value = s.email;
+            document.getElementById('edit-alert').style.display = 'none';
+            // Render enrollment checkboxes
+            const container = document.getElementById('enroll-checkboxes');
+            container.innerHTML = '';
+            const enrolled = studentEnrollments[uid] || [];
+            allCourses.forEach(c => {
+                const isChecked = enrolled.includes(c.id);
+                container.innerHTML += `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;border-radius:8px;background:var(--soft-cream);"><input type="checkbox" ${isChecked?'checked':''} value="${c.id}" style="accent-color:var(--deep-maroon);width:16px;height:16px;"> <span style="font-size:0.9rem;font-weight:500;">${c.title}</span></label>`;
+            });
+            openModal('edit-modal');
+        };
+
+        window.saveEdit = async (e) => {
+            e.preventDefault();
+            const uid = document.getElementById('edit-uid').value;
+            const name = document.getElementById('edit-name').value.trim();
+            const mobile = document.getElementById('edit-mobile').value.trim();
+            if (mobile.length !== 10) { showAlert('edit-alert','Enter a valid 10-digit mobile number.'); return; }
+            try {
+                await updateStudent(uid, { name, mobile });
+                // Update enrollments
+                const checks = document.querySelectorAll('#enroll-checkboxes input[type=checkbox]');
+                const newEnrolled = [...checks].filter(c=>c.checked).map(c=>c.value);
+                const oldEnrolled = studentEnrollments[uid] || [];
+                for (const courseId of newEnrolled) { if (!oldEnrolled.includes(courseId)) await enrollStudent(uid, courseId); }
+                for (const courseId of oldEnrolled) { if (!newEnrolled.includes(courseId)) await unenrollStudent(uid, courseId); }
+                // Update local state
+                const s = allStudents.find(s=>s.id===uid);
+                if (s) { s.name = name; s.mobile = mobile; }
+                studentEnrollments[uid] = newEnrolled;
+                closeModal('edit-modal');
+                renderTable(allStudents);
+                toast('Student updated successfully!');
+            } catch(err) { showAlert('edit-alert', err.message || 'Update failed.'); }
+        };
+
+        let deleteTargetId = null;
+        window.openDelete = (uid, name) => {
+            deleteTargetId = uid;
+            document.getElementById('delete-student-name').textContent = name;
+            openModal('delete-modal');
+        };
+        document.getElementById('confirm-delete-btn').onclick = async () => {
+            if (!deleteTargetId) return;
+            try {
+                await deleteStudent(deleteTargetId);
+                allStudents = allStudents.filter(s => s.id !== deleteTargetId);
+                delete studentEnrollments[deleteTargetId];
+                closeModal('delete-modal');
+                renderTable(allStudents);
+                toast('Student deleted.');
+            } catch(e) { toast('Failed to delete student.','error'); }
+        };
+
+        window.openModal = (id) => document.getElementById(id).classList.add('active');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+        document.getElementById('logout-btn').addEventListener('click', async (e) => { e.preventDefault(); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+
+        loadData();
+    </script>
+</body>
+</html>

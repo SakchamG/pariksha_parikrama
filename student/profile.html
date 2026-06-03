@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .profile-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+        .profile-card { background: var(--white); border-radius: 20px; padding: 36px 28px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); text-align: center; }
+        .big-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg,var(--deep-maroon),var(--navy-blue)); color: white; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; font-weight: 700; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(107,30,30,0.3); }
+        .profile-card h2 { font-size: 1.4rem; color: var(--navy-blue); margin-bottom: 6px; }
+        .profile-card .email { font-size: 0.88rem; color: var(--medium-gray); }
+        .profile-card .mobile { font-size: 0.88rem; color: var(--medium-gray); margin-top: 4px; }
+        .profile-card .role-badge { display: inline-block; background: rgba(107,30,30,0.1); color: var(--deep-maroon); font-size: 0.75rem; font-weight: 700; padding: 5px 14px; border-radius: 50px; margin-top: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .profile-card .since { font-size: 0.78rem; color: #b0b8c4; margin-top: 12px; }
+        .form-section { background: var(--white); border-radius: 20px; padding: 32px 36px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 24px; }
+        .form-section h3 { font-size: 1.15rem; color: var(--navy-blue); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; font-family: 'Inter', sans-serif; font-weight: 700; }
+        .form-section h3 i { color: var(--warm-gold); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 992px) { .profile-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .form-section { padding: 24px 20px; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Student Portal</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Main</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="courses.html"><i class="fas fa-book-open"></i> My Courses</a>
+                <a href="announcements.html"><i class="fas fa-bell"></i> Announcements</a>
+                <div class="dash-nav-label">Account</div>
+                <a href="profile.html" class="active"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="coupon.html"><i class="fas fa-ticket-alt"></i> Redeem Coupon</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>My Profile</h1>
+                </div>
+                <div class="dash-topbar-right"><div class="topbar-avatar" id="topbar-avatar">?</div></div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+                <div class="profile-layout">
+                    <!-- Profile Card -->
+                    <div>
+                        <div class="profile-card">
+                            <div class="big-avatar" id="big-avatar">?</div>
+                            <h2 id="profile-name-display">Loading...</h2>
+                            <div class="email" id="profile-email-display">—</div>
+                            <div class="mobile" id="profile-mobile-display">—</div>
+                            <div class="role-badge">Student</div>
+                            <div class="since" id="profile-since">Member since —</div>
+                        </div>
+                    </div>
+                    <!-- Edit Area -->
+                    <div>
+                        <!-- Edit Profile -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
+                            <div id="profile-alert" class="alert" style="display:none;"></div>
+                            <form id="profile-form" onsubmit="updateProfile(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name <span class="required">*</span></label>
+                                        <div class="input-group"><i class="fas fa-user input-icon"></i><input type="text" id="edit-name" class="form-input" placeholder="Your full name" required></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Mobile Number <span class="required">*</span></label>
+                                        <div class="input-group"><i class="fas fa-phone input-icon"></i><input type="tel" id="edit-mobile" class="form-input" placeholder="10-digit mobile" pattern="[0-9]{10}" required></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-group"><i class="fas fa-envelope input-icon"></i><input type="email" id="edit-email" class="form-input" placeholder="—" disabled style="background:#f8f9fa;cursor:not-allowed;"></div>
+                                    <p class="form-hint">Email cannot be changed. Contact admin if needed.</p>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="save-profile-btn"><i class="fas fa-save"></i> Save Changes</button>
+                            </form>
+                        </div>
+
+                        <!-- Change Password -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-key"></i> Change Password</h3>
+                            <div id="pwd-alert" class="alert" style="display:none;"></div>
+                            <form id="pwd-form" onsubmit="changeMyPassword(event)">
+                                <div class="form-group">
+                                    <label class="form-label">Current Password <span class="required">*</span></label>
+                                    <div class="input-group"><i class="fas fa-lock input-icon"></i><input type="password" id="current-pwd" class="form-input" placeholder="Enter current password" required><i class="fas fa-eye input-icon-right" onclick="togglePwd('current-pwd',this)"></i></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">New Password <span class="required">*</span></label>
+                                        <div class="input-group"><i class="fas fa-lock input-icon"></i><input type="password" id="new-pwd" class="form-input" placeholder="Min. 6 characters" minlength="6" required></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Confirm New Password <span class="required">*</span></label>
+                                        <div class="input-group"><i class="fas fa-lock input-icon"></i><input type="password" id="confirm-pwd" class="form-input" placeholder="Repeat new password" required></div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-navy" id="change-pwd-btn"><i class="fas fa-key"></i> Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="toast-container"></div>
+    <script type="module">
+        import { requireAuth, getUserProfile, changePassword } from '../js/auth.js';
+        import { updateStudent } from '../js/db.js';
+        let currentUser = null;
+        window.togglePwd = (inputId, icon) => {
+            const inp = document.getElementById(inputId);
+            if (inp.type==='password') { inp.type='text'; icon.classList.replace('fa-eye','fa-eye-slash'); }
+            else { inp.type='password'; icon.classList.replace('fa-eye-slash','fa-eye'); }
+        };
+        function showAlert(id, msg, type='success') {
+            const el = document.getElementById(id);
+            el.className = `alert alert-${type}`;
+            el.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+            el.style.display = 'flex';
+            setTimeout(() => el.style.display='none', 4000);
+        }
+        function formatDate(ts) { if (!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('en-IN',{month:'long',year:'numeric'}); }
+        async function init() {
+            try {
+                const user = await requireAuth('student','../login.html');
+                currentUser = user;
+                const profile = await getUserProfile(user.uid);
+                if (!profile) return;
+                document.getElementById('topbar-avatar').textContent = profile.name.charAt(0).toUpperCase();
+                document.getElementById('big-avatar').textContent = profile.name.charAt(0).toUpperCase();
+                document.getElementById('profile-name-display').textContent = profile.name;
+                document.getElementById('profile-email-display').textContent = profile.email;
+                document.getElementById('profile-mobile-display').textContent = profile.mobile ? '+91 ' + profile.mobile : 'Not set';
+                document.getElementById('profile-since').textContent = 'Member since ' + formatDate(profile.createdAt);
+                document.getElementById('edit-name').value = profile.name;
+                document.getElementById('edit-mobile').value = profile.mobile || '';
+                document.getElementById('edit-email').value = profile.email;
+            } catch(e) {}
+        }
+        window.updateProfile = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('save-profile-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            try {
+                const name = document.getElementById('edit-name').value.trim();
+                const mobile = document.getElementById('edit-mobile').value.trim();
+                if (mobile.length !== 10 || !/^\d+$/.test(mobile)) throw new Error('Enter a valid 10-digit mobile number.');
+                await updateStudent(currentUser.uid, { name, mobile });
+                document.getElementById('profile-name-display').textContent = name;
+                document.getElementById('profile-mobile-display').textContent = '+91 ' + mobile;
+                document.getElementById('topbar-avatar').textContent = name.charAt(0).toUpperCase();
+                document.getElementById('big-avatar').textContent = name.charAt(0).toUpperCase();
+                showAlert('profile-alert', 'Profile updated successfully!', 'success');
+            } catch(err) { showAlert('profile-alert', err.message || 'Failed to update profile.', 'error'); }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        };
+        window.changeMyPassword = async (e) => {
+            e.preventDefault();
+            const newPwd = document.getElementById('new-pwd').value;
+            const confirmPwd = document.getElementById('confirm-pwd').value;
+            if (newPwd !== confirmPwd) { showAlert('pwd-alert','Passwords do not match.','error'); return; }
+            const btn = document.getElementById('change-pwd-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            try {
+                const curPwd = document.getElementById('current-pwd').value;
+                await changePassword(curPwd, newPwd);
+                showAlert('pwd-alert','Password changed successfully!','success');
+                document.getElementById('pwd-form').reset();
+            } catch(err) {
+                let msg = 'Failed to change password.';
+                if (err.code === 'auth/wrong-password' || err.code==='auth/invalid-credential') msg = 'Current password is incorrect.';
+                showAlert('pwd-alert', msg, 'error');
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-key"></i> Update Password';
+        };
+        document.getElementById('logout-btn').addEventListener('click', async (e) => { e.preventDefault(); const { logoutUser } = await import('../js/auth.js'); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        init();
+    </script>
+</body>
+</html>

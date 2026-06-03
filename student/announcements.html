@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements — Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .ann-full { background: var(--white); border-radius: 18px; padding: 28px 32px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); border-left: 5px solid var(--warm-gold); margin-bottom: 20px; transition: var(--transition); }
+        .ann-full:hover { box-shadow: var(--shadow-md); }
+        .ann-full.urgent { border-left-color: #ef4444; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.06); }
+        .ann-full.urgent:hover { box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12); }
+        .ann-full.info { border-left-color: #3b82f6; }
+        .ann-full-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        .ann-full-header h3 { font-size: 1.2rem; color: var(--navy-blue); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .ann-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .ann-date { font-size: 0.8rem; color: var(--medium-gray); display: flex; align-items: center; gap: 6px; }
+        .ann-body { font-size: 0.95rem; color: var(--dark-text); line-height: 1.8; white-space: pre-wrap; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 2px solid #e2e8f0; background: var(--white); color: var(--medium-gray); transition: var(--transition); }
+        .filter-btn.active { border-color: var(--deep-maroon); background: var(--deep-maroon); color: var(--white); }
+
+        /* Green [NEW] badge */
+        .badge-new {
+            background: rgba(34, 197, 94, 0.12);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-right: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Student Portal</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Main</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="courses.html"><i class="fas fa-book-open"></i> My Courses</a>
+                <a href="announcements.html" class="active"><i class="fas fa-bell"></i> Announcements</a>
+                <div class="dash-nav-label">Account</div>
+                <a href="profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="coupon.html"><i class="fas fa-ticket-alt"></i> Redeem Coupon</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Announcements</h1>
+                </div>
+                <div class="dash-topbar-right"><div class="topbar-avatar" id="topbar-avatar">?</div></div>
+            </div>
+            <div class="dash-content">
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="filterAnn('all',this)">All</button>
+                    <button class="filter-btn" onclick="filterAnn('general',this)">General</button>
+                    <button class="filter-btn" onclick="filterAnn('urgent',this)">Urgent</button>
+                    <button class="filter-btn" onclick="filterAnn('info',this)">Info</button>
+                </div>
+                <div id="loading" class="loading-state"><div class="spinner"></div></div>
+                <div id="ann-container"></div>
+                <div id="no-ann" class="empty-state" style="display:none;"><i class="fas fa-bell-slash"></i><h3>No announcements</h3><p>Nothing posted yet. Check back later.</p></div>
+            </div>
+        </main>
+    </div>
+    <script type="module">
+        import { requireAuth, getUserProfile, logoutUser } from '../js/auth.js';
+        import { getAnnouncements } from '../js/db.js';
+        let allAnn = [];
+        function getTimestampMs(ts) {
+            if (!ts) return 0;
+            if (typeof ts.toDate === 'function') return ts.toDate().getTime();
+            if (ts.seconds !== undefined) return ts.seconds * 1000;
+            const parsed = new Date(ts).getTime();
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function formatDate(ts) {
+            if (!ts) return '';
+            const ms = getTimestampMs(ts);
+            const d = new Date(ms);
+            return d.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+        }
+        function renderAnn(list) {
+            const c = document.getElementById('ann-container');
+            c.innerHTML = '';
+            if (list.length === 0) { document.getElementById('no-ann').style.display = 'block'; return; }
+            document.getElementById('no-ann').style.display = 'none';
+            list.forEach(a => {
+                const div = document.createElement('div');
+                div.className = `ann-full${a.category && a.category!=='general' ? ' '+a.category : ''}`;
+                
+                // Posted within the last 24 hours
+                const isNew = a.createdAt && (Date.now() - getTimestampMs(a.createdAt) < 24 * 60 * 60 * 1000);
+                const newBadge = isNew ? `<span class="badge-new">NEW</span>` : '';
+                
+                const urgentIcon = a.category === 'urgent' ? '<i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i> ' : '';
+                const categoryBadge = a.category ? `<span class="badge badge-${a.category==='urgent'?'error':a.category==='info'?'navy':'gold'}">${urgentIcon}${a.category.toUpperCase()}</span>` : '';
+ 
+                div.innerHTML = `
+                    <div class="ann-full-header">
+                        <h3>${newBadge}${a.title}</h3>
+                        <div class="ann-meta">
+                            ${categoryBadge}
+                            <span class="ann-date"><i class="fas fa-calendar-alt"></i> ${formatDate(a.createdAt)}</span>
+                        </div>
+                    </div>
+                    <div class="ann-body">${a.body || ''}</div>`;
+                c.appendChild(div);
+            });
+        }
+        window.filterAnn = (cat, btn) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filtered = cat === 'all' ? allAnn : allAnn.filter(a => a.category === cat);
+            renderAnn(filtered);
+        };
+        async function init() {
+            try {
+                const user = await requireAuth('student','../login.html');
+                const profile = await getUserProfile(user.uid);
+                document.getElementById('topbar-avatar').textContent = profile.name.charAt(0).toUpperCase();
+                allAnn = await getAnnouncements();
+                document.getElementById('loading').style.display = 'none';
+                renderAnn(allAnn);
+            } catch(e) {}
+        }
+        document.getElementById('logout-btn').addEventListener('click', async (e) => { e.preventDefault(); const { logoutUser } = await import('../js/auth.js'); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        init();
+    </script>
+</body>
+</html>

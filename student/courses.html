@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses — Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+
+        .course-hero {
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            color: white;
+            padding: 32px 28px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+        }
+
+        .course-hero h2 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .course-hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.92rem;
+        }
+
+        .course-card-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .full-course-card {
+            background: var(--white);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .full-course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .fcc-header {
+            height: 160px;
+            background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .fcc-cat-pill {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(233, 185, 73, 0.9);
+            color: var(--navy-blue);
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fcc-body {
+            padding: 22px 24px;
+        }
+
+        .fcc-body h3 {
+            font-size: 1.15rem;
+            color: var(--navy-blue);
+            margin-bottom: 10px;
+        }
+
+        .fcc-body p {
+            font-size: 0.88rem;
+            color: var(--medium-gray);
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+
+        .fcc-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .fcc-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--medium-gray);
+        }
+
+        .fcc-stat i {
+            color: var(--warm-gold);
+        }
+
+        .fcc-stat strong {
+            color: var(--dark-text);
+        }
+
+        /* Sleek course progress bar */
+        .ecc-progress-container {
+            margin-bottom: 16px;
+        }
+
+        .ecc-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            color: var(--medium-gray);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .ecc-progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ecc-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-maroon), var(--warm-gold));
+            border-radius: 10px;
+            transition: width 0.6s ease-in-out;
+            box-shadow: 0 0 8px rgba(233, 185, 73, 0.35);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo">
+                <span class="logo-text">PARIKSHA PARIKRAMA</span>
+                <span>Student Portal</span>
+            </div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Main</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="courses.html" class="active"><i class="fas fa-book-open"></i> My Courses</a>
+                <a href="announcements.html"><i class="fas fa-bell"></i> Announcements</a>
+                <div class="dash-nav-label">Account</div>
+                <a href="profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="coupon.html"><i class="fas fa-ticket-alt"></i> Redeem Coupon</a>
+            </nav>
+            <div class="dash-sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>My Courses</h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <a href="coupon.html" class="btn btn-sm btn-gold"><i class="fas fa-ticket-alt"></i> Redeem Code</a>
+                    <div class="topbar-avatar" id="topbar-avatar">?</div>
+                </div>
+            </div>
+            <div class="dash-content">
+                <div class="course-hero">
+                    <h2>📚 Your Enrolled Courses</h2>
+                    <p>Select a course to access lectures, notes, and study materials.</p>
+                </div>
+                <div id="loading" class="loading-state">
+                    <div class="spinner"></div>
+                    <p style="margin-top:12px;">Loading your courses...</p>
+                </div>
+                <div class="course-card-wrap" id="course-grid" style="display:none;"></div>
+                <div id="no-courses" class="empty-state" style="display:none;">
+                    <i class="fas fa-book-open"></i>
+                    <h3>No Courses Enrolled</h3>
+                    <p>Use a coupon code from your admin to unlock a course.</p>
+                    <a href="coupon.html" class="btn btn-primary" style="margin-top:20px;"><i
+                            class="fas fa-ticket-alt"></i> Redeem Coupon</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module">
+        import {
+            requireAuth,
+            getUserProfile,
+            logoutUser
+        } from '../js/auth.js';
+
+        import {
+            getEnrollments,
+            getCourse,
+            getLectures,
+            getNotes
+        } from '../js/db.js';
+
+        async function init() {
+            try {
+
+                const user = await requireAuth('student', '../login.html');
+                const profile = await getUserProfile(user.uid);
+
+                if (!profile || !profile.isActive) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+
+                // Avatar
+                document.getElementById('topbar-avatar').textContent =
+                    profile.name?.charAt(0)?.toUpperCase() || '?';
+
+                // Get enrollments
+                const enrollments = await getEnrollments(user.uid);
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+
+                // No courses
+                if (!enrollments || enrollments.length === 0) {
+                    document.getElementById('no-courses').style.display = 'block';
+                    return;
+                }
+
+                const grid = document.getElementById('course-grid');
+                grid.style.display = 'grid';
+
+                const icons = {
+                    'KSET': '🎓',
+                    'UGC-NET': '📘',
+                    'KARTET': '📝',
+                    'Lecturers Exam': '🏛️'
+                };
+
+                // Loop enrolled courses
+                for (const en of enrollments) {
+
+                    try {
+
+                        // Get course
+                        const course = await getCourse(en.courseId);
+
+                        if (!course) {
+                            console.warn('Course not found:', en.courseId);
+                            continue;
+                        }
+
+                        // Safe lecture load
+                        let lectures = [];
+                        try {
+                            lectures = await getLectures(en.courseId);
+                        } catch (err) {
+                            console.error('Lecture error:', err);
+                        }
+
+                        // Safe notes load
+                        let notes = [];
+                        try {
+                            notes = await getNotes(en.courseId);
+                        } catch (err) {
+                            console.error('Notes error:', err);
+                        }
+
+                        // Progress percentage and resume button label
+                        const progressPercent = en.progressPercentage || 0;
+                        const lastIdx = en.lastWatchedIndex !== undefined && en.lastWatchedIndex !== null ? en.lastWatchedIndex : 0;
+                        const lastLec = lectures[lastIdx];
+                        const titleText = lastLec ? (lastLec.title.length > 22 ? lastLec.title.substring(0, 20) + '...' : lastLec.title) : '';
+                        const buttonLabel = lastLec ? `Resume: L${lastIdx + 1} — ${titleText}` : 'Start Learning';
+
+                        // Create card
+                        const card = document.createElement('div');
+                        card.className = 'full-course-card';
+
+                        card.innerHTML = `
+                    <div class="fcc-header">
+                        <span class="fcc-cat-pill">
+                            ${course.category || 'Course'}
+                        </span>
+
+                        ${icons[course.category] || '📚'}
+                    </div>
+
+                    <div class="fcc-body">
+                        <h3>${course.title || 'Untitled Course'}</h3>
+
+                        <p>
+                            ${course.description || 'Access lectures and study materials.'}
+                        </p>
+
+                        <div class="ecc-progress-container">
+                            <div class="ecc-progress-label">
+                                <span>Course Progress</span>
+                                <span>${progressPercent}%</span>
+                            </div>
+                            <div class="ecc-progress-bar">
+                                <div class="ecc-progress-fill" style="width: ${progressPercent}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="fcc-stats">
+
+                            <div class="fcc-stat">
+                                <i class="fas fa-video"></i>
+                                <strong>${lectures.length}</strong>
+                                Lectures
+                            </div>
+
+                            <div class="fcc-stat">
+                                <i class="fas fa-file-pdf"></i>
+                                <strong>${notes.length}</strong>
+                                Notes
+                            </div>
+
+                        </div>
+                        <a href="course-view?courseId=${encodeURIComponent(en.courseId)}"
+                            class="btn btn-primary btn-block">
+                            <i class="fas fa-play-circle"></i>
+                            ${buttonLabel}
+                        </a>
+                    </div>
+                `;
+
+                        grid.appendChild(card);
+
+                    } catch (courseError) {
+
+                        console.error(
+                            'Course render failed:',
+                            courseError
+                        );
+                    }
+                }
+
+            } catch (e) {
+                console.error('Init failed:', e);
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn')
+            .addEventListener('click', async (e) => {
+                e.preventDefault();
+                await logoutUser();
+            });
+
+        // Mobile sidebar
+        window.toggleSidebar = () => {
+            document.getElementById('dash-sidebar')
+                .classList.toggle('open');
+
+            document.getElementById('sidebar-overlay')
+                .classList.toggle('open');
+        };
+
+        window.closeSidebar = () => {
+            document.getElementById('dash-sidebar')
+                .classList.remove('open');
+
+            document.getElementById('sidebar-overlay')
+                .classList.remove('open');
+        };
+
+
+        // Start
+        init();
+    </script>
+</body>
+
+</html>

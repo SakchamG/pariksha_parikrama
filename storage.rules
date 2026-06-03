@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Secure course lecture videos: only enrolled students and admins can read/write
+    match /courses/{courseId}/lectures/{lectureId} {
+      allow read: if request.auth != null && (
+        firestore.exists(/databases/(default)/documents/enrollments/$(request.auth.uid) + '_' + courseId) ||
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      
+      allow write: if request.auth != null && 
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Public course resources, avatars, or fallback: require logged-in authentication
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

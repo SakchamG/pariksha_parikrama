@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .admin-welcome { background: linear-gradient(135deg, var(--navy-blue) 0%, #1e3a5f 50%, var(--deep-maroon) 100%); border-radius: 20px; padding: 32px 36px; color: white; margin-bottom: 28px; position: relative; overflow: hidden; }
+        .admin-welcome::before { content: ''; position: absolute; top: -50px; right: -50px; width: 220px; height: 220px; background: rgba(233,185,73,0.1); border-radius: 50%; }
+        .admin-welcome h2 { font-size: 1.7rem; margin-bottom: 6px; }
+        .admin-welcome p { color: rgba(255,255,255,0.7); }
+        .admin-welcome .admin-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--warm-gold); color: var(--navy-blue); font-size: 0.78rem; font-weight: 700; padding: 5px 14px; border-radius: 50px; margin-top: 14px; }
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .quick-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px 16px; background: var(--white); border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); text-decoration: none; color: var(--dark-text); }
+        .quick-action-btn:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--warm-gold); }
+        .quick-action-btn .qa-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .quick-action-btn span { font-size: 0.88rem; font-weight: 600; text-align: center; color: var(--dark-text); }
+        .content-row { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+        .section-box { background: var(--white); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .section-box h3 { font-size: 1rem; font-family: 'Inter', sans-serif; font-weight: 700; color: var(--navy-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .section-box h3 i { color: var(--warm-gold); }
+        .student-mini { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+        .student-mini:last-child { border-bottom: none; }
+        .sm-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,var(--deep-maroon),var(--navy-blue)); color:white; display:flex;align-items:center;justify-content:center; font-weight:700; font-size:0.9rem; flex-shrink:0; }
+        .sm-info { flex: 1; }
+        .sm-info h4 { font-size: 0.9rem; font-family:'Inter',sans-serif; font-weight:600; color:var(--dark-text); }
+        .sm-info span { font-size:0.78rem; color:var(--medium-gray); }
+        .sm-badge { font-size:0.72rem; padding:3px 10px; border-radius:50px; font-weight:700; }
+        .sm-badge.active { background:rgba(34,197,94,0.12); color:#15803d; }
+        .sm-badge.inactive { background:rgba(239,68,68,0.12); color:#b91c1c; }
+        /* Custom Premium Confirmation Modal */
+        .confirm-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        .confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .confirm-modal {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+        .confirm-modal-overlay.active .confirm-modal {
+            transform: scale(1);
+        }
+
+        @media (max-width: 992px) { .content-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Admin Dashboard</h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <span style="font-size:0.85rem;color:var(--medium-gray);">admin@gmail.com</span>
+                    <div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div>
+                </div>
+            </div>
+            <div class="dash-content">
+                <!-- Welcome -->
+                <div class="admin-welcome">
+                    <h2>Welcome, Admin 👋</h2>
+                    <p>Manage students, courses, lectures and announcements from here.</p>
+                    <div class="admin-badge"><i class="fas fa-shield-alt"></i> Super Admin</div>
+                </div>
+                <!-- Stats -->
+                <div class="stats-strip" id="stats-strip">
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(20,33,61,0.1);color:var(--navy-blue);"><i class="fas fa-users"></i></div><div class="stat-value" id="s-students">—</div><div class="stat-label">Total Students</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(107,30,30,0.1);color:var(--deep-maroon);"><i class="fas fa-book"></i></div><div class="stat-value" id="s-courses">—</div><div class="stat-label">Courses</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(233,185,73,0.15);color:#92650a;"><i class="fas fa-video"></i></div><div class="stat-value" id="s-lectures">—</div><div class="stat-label">Total Lectures</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,0.12);color:#15803d;"><i class="fas fa-ticket-alt"></i></div><div class="stat-value" id="s-coupons">—</div><div class="stat-label">Active Coupons</div></div>
+                </div>
+                <!-- Quick Actions -->
+                <h3 style="font-size:1rem;font-family:'Inter',sans-serif;font-weight:700;color:var(--navy-blue);margin-bottom:16px;">⚡ Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="students.html" class="quick-action-btn"><div class="qa-icon" style="background:rgba(20,33,61,0.1);color:var(--navy-blue);"><i class="fas fa-user-plus"></i></div><span>Add Student</span></a>
+                    <a href="courses.html" class="quick-action-btn"><div class="qa-icon" style="background:rgba(107,30,30,0.1);color:var(--deep-maroon);"><i class="fas fa-plus-circle"></i></div><span>Add Course</span></a>
+                    <a href="lectures.html" class="quick-action-btn"><div class="qa-icon" style="background:rgba(233,185,73,0.15);color:#92650a;"><i class="fas fa-video"></i></div><span>Add Lecture</span></a>
+                    <a href="announcements.html" class="quick-action-btn"><div class="qa-icon" style="background:rgba(34,197,94,0.12);color:#15803d;"><i class="fas fa-bullhorn"></i></div><span>Post Announcement</span></a>
+                    <a href="coupon-management.html" class="quick-action-btn"><div class="qa-icon" style="background:rgba(139,92,246,0.12);color:#7c3aed;"><i class="fas fa-ticket-alt"></i></div><span>Generate Coupon</span></a>
+                </div>
+                <!-- Content Row -->
+                <div class="content-row">
+                    <!-- Recent Students -->
+                    <div class="section-box">
+                        <h3><i class="fas fa-users"></i> Recent Students</h3>
+                        <div id="recent-students-loading" class="loading-state"><div class="spinner"></div></div>
+                        <div id="recent-students"></div>
+                        <a href="students.html" class="btn btn-secondary btn-sm" style="margin-top:16px;"><i class="fas fa-arrow-right"></i> Manage All Students</a>
+                    </div>
+                    <!-- Recent Announcements -->
+                    <div>
+                        <div class="section-box">
+                            <h3><i class="fas fa-bullhorn"></i> Recent Announcements</h3>
+                            <div id="recent-ann-loading" class="loading-state"><div class="spinner"></div></div>
+                            <div id="recent-ann"></div>
+                            <a href="announcements.html" class="btn btn-secondary btn-sm" style="margin-top:16px;"><i class="fas fa-plus"></i> Add Announcement</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-modal-overlay" id="logout-confirm-modal">
+        <div class="confirm-modal">
+            <div style="font-size: 3rem; color: var(--deep-maroon); margin-bottom: 16px;">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3 style="color: var(--navy-blue); font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; font-family: 'Inter', sans-serif;">Confirm Logout</h3>
+            <p style="color: var(--medium-gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px;">
+                Are you sure you want to log out of your session?
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="btn btn-secondary btn-sm" onclick="closeLogoutModal()" style="min-width: 100px;">Cancel</button>
+                <button class="btn btn-primary btn-sm" onclick="confirmLogout()" style="background: var(--deep-maroon); border-color: var(--deep-maroon); min-width: 100px;">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import { getStudents, getCourses, getLectures, getCoupons, getAnnouncements } from '../js/db.js';
+
+        // Trap back button and prompt logout confirmation
+        history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, window.location.href);
+            window.openLogoutModal();
+        });
+
+        window.openLogoutModal = () => {
+            document.getElementById('logout-confirm-modal').classList.add('active');
+        };
+        window.closeLogoutModal = () => {
+            document.getElementById('logout-confirm-modal').classList.remove('active');
+        };
+        window.confirmLogout = async () => {
+            window.closeLogoutModal();
+            await logoutUser();
+        };
+
+        function formatDate(ts) { if (!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+        async function init() {
+            try {
+                await requireAuth('admin','../login.html');
+                const [students, courses, coupons, anns] = await Promise.all([getStudents(), getCourses(), getCoupons(), getAnnouncements()]);
+                // Count lectures
+                let totalLectures = 0;
+                for (const c of courses) { const l = await getLectures(c.id); totalLectures += l.length; }
+                // Stats
+                document.getElementById('s-students').textContent = students.length;
+                document.getElementById('s-courses').textContent = courses.length;
+                document.getElementById('s-lectures').textContent = totalLectures;
+                document.getElementById('s-coupons').textContent = coupons.filter(c=>!c.isUsed).length;
+                // Recent students
+                document.getElementById('recent-students-loading').style.display = 'none';
+                const rsEl = document.getElementById('recent-students');
+                if (students.length === 0) { rsEl.innerHTML = '<p class="text-muted" style="text-align:center;padding:20px;">No students yet.</p>'; }
+                else {
+                    students.slice(0,5).forEach(s => {
+                        rsEl.innerHTML += `<div class="student-mini"><div class="sm-avatar">${s.name.charAt(0).toUpperCase()}</div><div class="sm-info"><h4>${s.name}</h4><span>${s.email}</span></div><span class="sm-badge ${s.isActive?'active':'inactive'}">${s.isActive?'Active':'Inactive'}</span></div>`;
+                    });
+                }
+                // Recent announcements
+                document.getElementById('recent-ann-loading').style.display = 'none';
+                const raEl = document.getElementById('recent-ann');
+                if (anns.length === 0) { raEl.innerHTML = '<p class="text-muted" style="text-align:center;padding:20px;">No announcements yet.</p>'; }
+                else {
+                    anns.slice(0,3).forEach(a => {
+                        raEl.innerHTML += `<div class="ann-mini" style="margin-bottom:12px;"><div class="ann-date"><i class="fas fa-calendar" style="color:var(--warm-gold);"></i> ${formatDate(a.createdAt)}</div><h4>${a.title}</h4><p>${a.body ? a.body.substring(0,80)+'...' : ''}</p></div>`;
+                    });
+                }
+            } catch(e) { console.error(e); }
+        }
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); window.openLogoutModal(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        init();
+    </script>
+</body>
+</html>

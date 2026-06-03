@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Workspace — Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Plyr Custom Video Player -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    
+    <style>
+        /* Custom Plyr Theme overrides */
+        :root {
+            --plyr-color-main: var(--deep-maroon);
+            --plyr-video-control-color: var(--white);
+            --plyr-video-control-color-hover: var(--warm-gold);
+            --plyr-control-radius: 12px;
+            --plyr-video-controls-background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75));
+        }
+        
+        .plyr {
+            border-radius: 20px;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Custom Next Lecture button styling inside Plyr control bar */
+        .plyr__control--next-lecture {
+            transition: var(--transition);
+        }
+
+        .plyr__control--next-lecture:hover {
+            color: var(--warm-gold) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .plyr__control--next-lecture svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .plyr__control--next-lecture[disabled] {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            background: transparent !important;
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        body {
+            background: #f0f2f5;
+        }
+
+        /* --- Workspace Layout --- */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 28px;
+            margin-top: 24px;
+        }
+
+        /* --- Video Player Card --- */
+        .player-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            min-height: 420px;
+            aspect-ratio: 16/9;
+            background: #000;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            object-fit: contain;
+        }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: rgba(255, 255, 255, 0.4);
+            gap: 16px;
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+        }
+
+        .video-placeholder i {
+            font-size: 4.5rem;
+            color: var(--warm-gold);
+            text-shadow: 0 0 20px rgba(233, 185, 73, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        /* --- Video Watermark --- */
+        .watermark-layer {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            user-select: none;
+            animation: wmPulse 3s ease-in-out infinite;
+            transition: top 5s ease, left 5s ease;
+        }
+
+        .wm-content {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+
+        .wm-content p {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        @keyframes wmPulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* --- Lecture Details --- */
+        .lecture-details {
+            padding: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .lecture-details h2 {
+            font-size: 1.4rem;
+            color: var(--navy-blue);
+            margin-bottom: 8px;
+        }
+
+        .lecture-details p {
+            font-size: 0.92rem;
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        .lecture-nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* --- Resources / Notes Section --- */
+        .resources-section {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .resources-section h3 {
+            font-size: 1.15rem;
+            color: var(--navy-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resources-section h3 i {
+            color: var(--deep-maroon);
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .note-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--light-gray);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .note-card:hover {
+            border-color: var(--deep-maroon);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .note-file-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(107, 30, 30, 0.08);
+            color: var(--deep-maroon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .note-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .note-info h4 {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .note-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-view-pdf {
+            background: rgba(20, 33, 61, 0.08);
+            color: var(--navy-blue);
+        }
+
+        .btn-view-pdf:hover {
+            background: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .btn-dl-pdf {
+            background: rgba(233, 185, 73, 0.15);
+            color: #92650a;
+        }
+
+        .btn-dl-pdf:hover {
+            background: var(--warm-gold);
+            color: var(--navy-blue);
+        }
+
+        /* --- Playlist Sidebar --- */
+        .playlist-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 720px;
+            position: sticky;
+            top: 104px;
+        }
+
+        .playlist-header {
+            padding: 20px 24px;
+            background: linear-gradient(135deg, var(--navy-blue), #1e2d52);
+            color: var(--white);
+        }
+
+        .playlist-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .playlist-header p {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .playlist-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .playlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .playlist-item:hover {
+            background: rgba(107, 30, 30, 0.02);
+        }
+
+        .playlist-item.active {
+            background: rgba(233, 185, 73, 0.08);
+            border-left-color: var(--warm-gold);
+        }
+
+        .playlist-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            color: var(--medium-gray);
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .playlist-item.active .playlist-num {
+            background: var(--warm-gold);
+            color: var(--navy-blue);
+        }
+
+        .playlist-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .playlist-info h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-info p {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- Playlist Item Completion Checkmark --- */
+        .playlist-item-check {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: transparent;
+            margin-left: auto;
+            flex-shrink: 0;
+            background: transparent;
+        }
+
+        .playlist-item-check.completed {
+            border-color: #10b981;
+            background: #10b981;
+            color: var(--white);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+        }
+
+        .playlist-item-check:hover {
+            transform: scale(1.15);
+            border-color: #10b981;
+        }
+        
+        .playlist-item-check.completed:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+
+        /* --- PDF Viewer Modal --- */
+        .pdf-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 24px;
+        }
+
+        .pdf-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pdf-modal {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 1000px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: var(--transition);
+        }
+
+        .pdf-modal-overlay.active .pdf-modal {
+            transform: scale(1);
+        }
+
+        .pdf-modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-modal-header h3 {
+            font-size: 1.1rem;
+            color: var(--navy-blue);
+            font-weight: 700;
+        }
+
+        .pdf-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .pdf-modal-close:hover {
+            background: #fee2e2;
+            color: var(--error);
+        }
+
+        .pdf-frame-container {
+            flex: 1;
+            position: relative;
+            background: #f1f5f9;
+        }
+
+        .pdf-frame-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Breadcrumb Link */
+        .breadcrumb-link {
+            color: var(--medium-gray);
+            transition: var(--transition);
+        }
+
+        .breadcrumb-link:hover {
+            color: var(--deep-maroon);
+        }
+
+        @media (max-width: 992px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .playlist-card {
+                position: static;
+                max-height: 480px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .video-container {
+                min-height: 250px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .resources-section {
+                padding: 20px;
+            }
+
+            .lecture-details {
+                padding: 16px;
+            }
+
+            .pdf-modal {
+                height: 90vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo">
+                <span class="logo-text">PARIKSHA PARIKRAMA</span>
+                <span>Student Portal</span>
+            </div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Main</div>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="courses.html" class="active"><i class="fas fa-book-open"></i> My Courses</a>
+                <a href="announcements.html"><i class="fas fa-bell"></i> Announcements</a>
+                <div class="dash-nav-label">Account</div>
+                <a href="profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="coupon.html"><i class="fas fa-ticket-alt"></i> Redeem Coupon</a>
+            </nav>
+            <div class="dash-sidebar-footer">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="dash-main">
+            <!-- Topbar Header -->
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1 style="font-size: 1.25rem; font-weight: 500;">
+                        <a href="courses.html" class="breadcrumb-link">My Courses</a>
+                        <i class="fas fa-chevron-right"
+                            style="font-size: 0.8rem; margin: 0 8px; color: var(--medium-gray);"></i>
+                        <span id="topbar-course-title"
+                            style="color: var(--navy-blue); font-weight: 700;">Workspace</span>
+                    </h1>
+                </div>
+                <div class="dash-topbar-right">
+                    <div class="topbar-avatar" id="topbar-avatar">S</div>
+                </div>
+            </div>
+
+            <!-- Workspace Content -->
+            <div class="container-fluid" style="padding: 0;">
+                <div class="workspace-grid">
+                    <!-- Left Work Area -->
+                    <div class="work-main">
+                        <!-- Video Player Card -->
+                        <div class="player-card">
+                            <div class="video-container" id="video-wrap">
+                                <div class="video-placeholder" id="video-placeholder">
+                                    <i class="fas fa-play-circle"></i>
+                                    <p style="font-weight: 600; font-size: 1.1rem; color: #fff; margin: 0;">Access
+                                        Lectures & Notes</p>
+                                    <p style="font-size: 0.9rem; margin: 0;">Select a lecture from the list on the right
+                                        to start your learning session.</p>
+                                </div>
+                                <!-- High Security Watermark overlay -->
+                                <div class="watermark-layer" id="watermark" style="top:25%; left:45%; display:none;">
+                                    <div class="wm-content">
+                                        <p id="wm-name">Student Account</p>
+                                        <p id="wm-mobile">+91 XXXXXXXXXX</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lecture Info details -->
+                            <div class="lecture-details" id="lecture-info-bar" style="display:none;">
+                                <h2 id="current-lecture-title">Lecture Title</h2>
+                                <p id="current-lecture-desc">Lecture description goes here.</p>
+
+                                <div class="lecture-nav-controls">
+                                    <button class="btn btn-secondary btn-sm" id="prev-btn" onclick="navigateLecture(-1)"
+                                        disabled>
+                                        <i class="fas fa-arrow-left"></i> Previous Lecture
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="next-btn" onclick="navigateLecture(1)"
+                                        disabled>
+                                        Next Lecture <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Study Materials/Notes Card -->
+                        <div class="resources-section">
+                            <h3><i class="fas fa-file-pdf"></i> Study Notes & Reference PDFs</h3>
+                            <div id="notes-loading" class="loading-state" style="padding: 24px 0;">
+                                <div class="spinner"></div>
+                            </div>
+                            <div class="notes-grid" id="notes-list" style="display:none;"></div>
+                            <div id="no-notes" class="empty-state" style="display:none; padding: 24px 0;">
+                                <i class="fas fa-folder-open"
+                                    style="font-size: 2.5rem; color: var(--medium-gray); margin-bottom: 8px;"></i>
+                                <h4 style="color: var(--navy-blue); margin-bottom: 4px;">No notes uploaded</h4>
+                                <p style="font-size: 0.85rem;">Reference materials will appear here when uploaded by the
+                                    admin.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Playlist Sidebar -->
+                    <div class="work-sidebar">
+                        <div class="playlist-card">
+                            <div class="playlist-header">
+                                <h3>Lecture Playlist</h3>
+                                <p id="lecture-count-label">Loading playlist...</p>
+                            </div>
+                            <div id="playlist-loading" class="loading-state" style="padding: 32px 0;">
+                                <div class="spinner"></div>
+                            </div>
+                            <div class="playlist-list" id="playlist-panel" style="display:none;"></div>
+                            <div id="no-lectures" class="empty-state" style="display:none; padding: 32px 16px;">
+                                <i class="fas fa-video-slash"
+                                    style="font-size: 2.5rem; color: var(--medium-gray); margin-bottom: 8px;"></i>
+                                <h4 style="color: var(--white); margin-bottom: 4px; font-size: 0.95rem;">No lectures yet
+                                </h4>
+                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Lectures will be listed here
+                                    once published by the team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Reader Frame Overlay -->
+    <div class="pdf-modal-overlay" id="pdf-modal-overlay">
+        <div class="pdf-modal">
+            <div class="pdf-modal-header">
+                <h3 id="pdf-modal-title">Study Note PDF</h3>
+                <button class="pdf-modal-close" onclick="closePdfModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="pdf-frame-container">
+                <iframe id="pdf-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script imports and operations logic -->
+    <script type="module">
+        import { requireAuth, getUserProfile, logoutUser } from '../js/auth.js';
+        import { getLectures, getNotes, getCourse, isEnrolled, getEnrollmentProgress, saveLastWatched, toggleLectureCompletion } from '../js/db.js';
+        import { ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+        import { storage } from '../js/firebase-config.js';
+
+        const params = new URLSearchParams(window.location.search);
+        const courseId = params.get('courseId');
+
+        let lectures = [];
+        let currentIndex = -1;
+        let studentName = '', studentMobile = '';
+        let wmInterval = null;
+        let studentUid = '';
+        let completedLectures = [];
+
+        async function init() {
+            try {
+                // Ensure authentication and pull user details
+                const user = await requireAuth('student', '../login.html');
+                const profile = await getUserProfile(user.uid);
+
+                if (!profile || !profile.isActive) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+
+                studentUid = user.uid;
+                studentName = profile.name;
+                studentMobile = profile.mobile || '';
+
+                // Header Profile Badge
+                document.getElementById('topbar-avatar').textContent = profile.name.charAt(0).toUpperCase();
+
+                // Hydrate secure watermark fields
+                document.getElementById('wm-name').textContent = studentName;
+                document.getElementById('wm-mobile').textContent = studentMobile ? '+91 ' + studentMobile : '';
+
+                // Check student course enrollment security
+                const enrolled = await isEnrolled(user.uid, courseId);
+                if (!enrolled) {
+                    alert('You are not enrolled in this course.');
+                    window.location.href = 'courses.html';
+                    return;
+                }
+
+                // Retrieve course detail info
+                const course = await getCourse(courseId);
+                if (course) {
+                    document.getElementById('topbar-course-title').textContent = course.title;
+                }
+
+                // Retrieve progress and completed lectures list
+                const progress = await getEnrollmentProgress(studentUid, courseId);
+                const lastWatchedIndex = progress.lastWatchedIndex;
+                completedLectures = progress.completedLectures || [];
+
+                // Load lectures playlist
+                lectures = await getLectures(courseId);
+                document.getElementById('playlist-loading').style.display = 'none';
+
+                if (!lectures || lectures.length === 0) {
+                    document.getElementById('no-lectures').style.display = 'block';
+                    document.getElementById('lecture-count-label').textContent = '0 lectures';
+                } else {
+                    document.getElementById('playlist-panel').style.display = 'block';
+                    document.getElementById('lecture-count-label').textContent = `${lectures.length} lecture${lectures.length !== 1 ? 's' : ''}`;
+                    renderPlaylist();
+                    // Automatically auto-play the last watched index, or first lecture
+                    const startIndex = (lastWatchedIndex !== null && lastWatchedIndex >= 0 && lastWatchedIndex < lectures.length) ? lastWatchedIndex : 0;
+                    playLecture(startIndex);
+                }
+
+                // Load associated course notes PDF resources
+                const notes = await getNotes(courseId);
+                document.getElementById('notes-loading').style.display = 'none';
+
+                if (!notes || notes.length === 0) {
+                    document.getElementById('no-notes').style.display = 'block';
+                } else {
+                    const list = document.getElementById('notes-list');
+                    list.style.display = 'grid';
+                    list.innerHTML = '';
+                    notes.forEach(n => {
+                        const div = document.createElement('div');
+                        div.className = 'note-card';
+                        div.innerHTML = `
+                            <div class="note-file-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div class="note-info">
+                                <h4>${n.title}</h4>
+                            </div>
+                            <div class="note-actions">
+                                <button class="note-btn btn-view-pdf" title="View PDF inside workspace" onclick="openPdfReader('${n.pdfUrl}', '${n.title.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="note-btn btn-dl-pdf" title="Download Reference" onclick="downloadPdfFile('${n.pdfUrl}', '${n.title.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        `;
+                        list.appendChild(div);
+                    });
+                }
+
+            } catch (err) {
+                console.error('Workspace load error:', err);
+            }
+        }
+
+        // Render playlist list elements
+        function renderPlaylist() {
+            const panel = document.getElementById('playlist-panel');
+            panel.innerHTML = '';
+            lectures.forEach((lec, i) => {
+                const div = document.createElement('div');
+                div.className = `playlist-item${i === currentIndex ? ' active' : ''}`;
+                div.id = `play-item-${i}`;
+                div.innerHTML = `
+                    <div class="playlist-num">${i + 1}</div>
+                    <div class="playlist-info">
+                        <h4>${lec.title}</h4>
+                        <p>${lec.description ? lec.description.substring(0, 50) + '...' : 'Interactive class lecture video.'}</p>
+                    </div>
+                    <div class="playlist-item-check${completedLectures.includes(lec.id) ? ' completed' : ''}" 
+                         title="${completedLectures.includes(lec.id) ? 'Mark Incomplete' : 'Mark Complete'}"
+                         onclick="event.stopPropagation(); window.toggleCompletion(${i});">
+                        <i class="fas fa-check"></i>
+                    </div>
+                `;
+                div.onclick = () => playLecture(i);
+                panel.appendChild(div);
+            });
+        }
+
+        window.toggleCompletion = async (index, forceState = null) => {
+            try {
+                if (index < 0 || index >= lectures.length) return;
+                const lec = lectures[index];
+                const isCurrentlyCompleted = completedLectures.includes(lec.id);
+                const nextState = forceState !== null ? forceState : !isCurrentlyCompleted;
+
+                const result = await toggleLectureCompletion(studentUid, courseId, lec.id, nextState);
+                if (result) {
+                    completedLectures = result.completedLectures;
+                    renderPlaylist();
+                }
+            } catch (err) {
+                console.error('Error toggling completion:', err);
+            }
+        };
+
+        function isDirectVideoUrl(url) {
+            if (!url) return false;
+            if (url.match(/\.(mp4|webm|ogg|mkv|m3u8)(\?.*)?$/i)) return true;
+            if (url.includes('firebasestorage.googleapis.com')) return true;
+            if (url.startsWith('data:video/')) return true;
+            return false;
+        }
+
+        function getFormattedTimestamp() {
+            const d = new Date();
+            return d.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        async function getSecureVideoUrl(url) {
+            if (!url) return '';
+            if (url.startsWith('gs://')) {
+                try {
+                    return await getDownloadURL(ref(storage, url));
+                } catch (e) {
+                    console.error("Storage load error for gs path:", e);
+                    return '';
+                }
+            }
+            if (url.includes('firebasestorage.googleapis.com')) {
+                try {
+                    const match = url.match(/\/o\/([^?#]+)/);
+                    if (match) {
+                        const storagePath = decodeURIComponent(match[1]);
+                        return await getDownloadURL(ref(storage, storagePath));
+                    }
+                } catch (e) {
+                    console.error("Storage dynamic url resolve error:", e);
+                    return url;
+                }
+            }
+            return url;
+        }
+
+        function getYouTubeId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            return match ? match[1] : null;
+        }
+
+        window.playLecture = async (index) => {
+            if (index < 0 || index >= lectures.length) return;
+
+            currentIndex = index;
+            const lec = lectures[index];
+
+            // Save last watched progress in background
+            if (studentUid && courseId && lec.id) {
+                saveLastWatched(studentUid, courseId, lec.id, index)
+                    .catch(err => console.error('Error saving last watched progress:', err));
+            }
+
+            // Highlight active playlist item
+            document.querySelectorAll('.playlist-item')
+                .forEach(el => el.classList.remove('active'));
+
+            const activeItem = document.getElementById(`play-item-${index}`);
+
+            if (activeItem) {
+                activeItem.classList.add('active');
+                activeItem.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+
+            const videoWrap = document.getElementById('video-wrap');
+            // Show dynamic secure loading spinner
+            videoWrap.innerHTML = `
+                <div class="video-placeholder">
+                    <div class="spinner"></div>
+                    <p style="color: var(--white); margin-top: 16px; font-weight: 500;">Resolving secure playback stream...</p>
+                </div>
+            `;
+
+            try {
+                // Dynamically resolve short-lived secure download token URL checking bucket Storage rules
+                const resolvedVideoUrl = await getSecureVideoUrl(lec.videoUrl);
+
+                const ytId = getYouTubeId(resolvedVideoUrl);
+                const isDirect = isDirectVideoUrl(resolvedVideoUrl);
+                
+                let playerHtml = '';
+                let isPlyrPlayer = false;
+
+                if (isDirect) {
+                    playerHtml = `
+                        <video
+                            id="videoPlayer"
+                            playsinline
+                            style="width: 100%; height: 100%; object-fit: contain; background: #000;"
+                        >
+                            <source src="${resolvedVideoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                    isPlyrPlayer = true;
+                } else if (ytId) {
+                    playerHtml = `
+                        <div id="videoPlayer" data-plyr-provider="youtube" data-plyr-embed-id="${ytId}"></div>
+                    `;
+                    isPlyrPlayer = true;
+                } else {
+                    const embedUrl = buildEmbedUrl(resolvedVideoUrl);
+                    playerHtml = `
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src="${embedUrl}"
+                            title="Lecture Video"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    `;
+                }
+
+                // Mount player HTML
+                videoWrap.innerHTML = playerHtml;
+
+                if (isPlyrPlayer) {
+                    // Initialize custom Plyr video player with premium control list
+                    const player = new Plyr('#videoPlayer', {
+                        controls: [
+                            'play',
+                            'progress',
+                            'current-time',
+                            'mute',
+                            'volume',
+                            'settings',
+                            'fullscreen'
+                        ],
+                        settings: ['speed'],
+                        speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] },
+                        disableContextMenu: true,
+                        tooltips: { controls: true, seek: true }
+                    });
+
+                    // Auto-advance next lecture and mark completed on end
+                    player.on('ended', () => {
+                        if (studentUid && courseId && lec.id) {
+                            window.toggleCompletion(index, true).then(() => {
+                                if (index < lectures.length - 1) {
+                                    setTimeout(() => {
+                                        window.playLecture(index + 1);
+                                    }, 1500);
+                                }
+                            });
+                        } else if (index < lectures.length - 1) {
+                            setTimeout(() => {
+                                window.playLecture(index + 1);
+                            }, 1500);
+                        }
+                    });
+
+                    // Wait for Plyr layout to complete, then insert watermark inside Plyr container so it displays during native fullscreen!
+                    const plyrContainer = videoWrap.querySelector('.plyr');
+                    if (plyrContainer) {
+                        const wm = document.createElement('div');
+                        wm.className = 'watermark-layer';
+                        wm.id = 'watermark';
+                        wm.style.cssText = 'position: absolute; z-index: 10; pointer-events: none; user-select: none; top: 20%; left: 50%;';
+                        wm.innerHTML = `
+                            <div class="wm-content">
+                                <p>${studentName}</p>
+                                <p>${studentMobile ? '+91 ' + studentMobile : ''}</p>
+                                <p class="wm-timestamp" style="font-size: 0.72rem; opacity: 0.8; margin-top: 4px;">${getFormattedTimestamp()}</p>
+                            </div>
+                        `;
+                        plyrContainer.appendChild(wm);
+
+                        // Inject custom "Next Lecture" button directly inside the controls bar
+                        player.on('ready', () => {
+                            const plyrControls = plyrContainer.querySelector('.plyr__controls');
+                            if (plyrControls && !plyrControls.querySelector('.plyr__control--next-lecture')) {
+                                const nextBtn = document.createElement('button');
+                                nextBtn.type = 'button';
+                                nextBtn.className = 'plyr__control plyr__control--next-lecture';
+                                nextBtn.setAttribute('aria-label', 'Next Lecture');
+                                nextBtn.title = 'Next Lecture';
+                                nextBtn.innerHTML = `
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"></polygon>
+                                        <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="3"></line>
+                                    </svg>
+                                    <span class="plyr__tooltip">Next Lecture</span>
+                                `;
+                                
+                                if (index >= lectures.length - 1) {
+                                    nextBtn.setAttribute('disabled', 'true');
+                                    nextBtn.style.opacity = '0.4';
+                                    nextBtn.style.cursor = 'not-allowed';
+                                } else {
+                                    nextBtn.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        window.navigateLecture(1);
+                                    });
+                                }
+
+                                // Place it before the fullscreen button
+                                const fullscreenBtn = plyrControls.querySelector('[data-plyr="fullscreen"]');
+                                if (fullscreenBtn) {
+                                    plyrControls.insertBefore(nextBtn, fullscreenBtn);
+                                } else {
+                                    plyrControls.appendChild(nextBtn);
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    // Standard fallback iframe watermark overlay
+                    const wm = document.createElement('div');
+                    wm.className = 'watermark-layer';
+                    wm.id = 'watermark';
+                    wm.style.cssText = 'position: absolute; z-index: 10; pointer-events: none; user-select: none; top: 20%; left: 50%;';
+                    wm.innerHTML = `
+                        <div class="wm-content">
+                            <p>${studentName}</p>
+                            <p>${studentMobile ? '+91 ' + studentMobile : ''}</p>
+                            <p class="wm-timestamp" style="font-size: 0.72rem; opacity: 0.8; margin-top: 4px;">${getFormattedTimestamp()}</p>
+                        </div>
+                    `;
+                    videoWrap.appendChild(wm);
+                }
+
+                // Watermark animation relocation relocation
+                clearInterval(wmInterval);
+                wmInterval = setInterval(moveWatermark, 6000);
+                moveWatermark();
+
+            } catch (err) {
+                console.error("Error setting up secure player:", err);
+                videoWrap.innerHTML = `
+                    <div class="video-placeholder">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--error); font-size: 3rem;"></i>
+                        <p style="color: var(--white); margin-top: 16px;">Failed to load secure video. Please try again or contact support.</p>
+                    </div>
+                `;
+            }
+
+            // Lecture details
+            document.getElementById('lecture-info-bar').style.display = 'block';
+
+            document.getElementById('current-lecture-title')
+                .textContent = lec.title;
+
+            document.getElementById('current-lecture-desc')
+                .textContent =
+                lec.description ||
+                'No supplementary details available.';
+
+            // Previous / next buttons
+            document.getElementById('prev-btn')
+                .disabled = (index === 0);
+
+            document.getElementById('next-btn')
+                .disabled = (index === lectures.length - 1);
+        };
+
+        // Construct clean embed player link
+        function buildEmbedUrl(url) {
+            if (!url) return '';
+
+            // Google Drive file preview
+            const gdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (gdMatch) {
+                return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+            }
+
+            // Already embed URL
+            const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+            if (embedMatch) {
+                return `https://www.youtube.com/embed/${embedMatch[1]}`;
+            }
+
+            // watch?v=
+            const watchMatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+            if (watchMatch) {
+                return `https://www.youtube.com/embed/${watchMatch[1]}`;
+            }
+
+            // youtu.be/
+            const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (shortMatch) {
+                return `https://www.youtube.com/embed/${shortMatch[1]}`;
+            }
+
+            return '';
+        }
+
+        // Relocate floating watermark randomly to counter recording tools
+        function moveWatermark() {
+            const wm = document.getElementById('watermark');
+            if (!wm) return;
+            const positions = [
+                { top: '6%', left: '4%' }, { top: '8%', left: '60%' },
+                { top: '38%', left: '6%' }, { top: '42%', left: '58%' },
+                { top: '74%', left: '4%' }, { top: '72%', left: '62%' },
+                { top: '22%', left: '30%' }, { top: '56%', left: '32%' }
+            ];
+            const pos = positions[Math.floor(Math.random() * positions.length)];
+            wm.style.top = pos.top;
+            wm.style.left = pos.left;
+
+            // Refresh dynamic timestamp on move
+            const tsElem = wm.querySelector('.wm-timestamp');
+            if (tsElem) {
+                tsElem.textContent = getFormattedTimestamp();
+            }
+        }
+
+        // Navigate via next/prev buttons
+        window.navigateLecture = (direction) => {
+            const destination = currentIndex + direction;
+            if (destination >= 0 && destination < lectures.length) {
+                playLecture(destination);
+            }
+        };
+
+        // Launch unified modal with dynamic PDF viewer frame inside the page
+        window.openPdfReader = (url, title) => {
+            document.getElementById('pdf-modal-title').textContent = title;
+            const embedPdfUrl = convertGDriveViewUrl(url);
+
+            // Set source of frame and load
+            const frame = document.getElementById('pdf-iframe');
+            frame.src = embedPdfUrl;
+
+            document.getElementById('pdf-modal-overlay').classList.add('active');
+        };
+
+        // Terminate active PDF preview session and blank iframe source
+        window.closePdfModal = () => {
+            document.getElementById('pdf-modal-overlay').classList.remove('active');
+            document.getElementById('pdf-iframe').src = 'about:blank';
+        };
+
+        // Trigger direct file download download trigger link
+        window.downloadPdfFile = (url, title) => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.pdf`;
+            a.target = '_blank';
+            a.click();
+        };
+
+        // GDrive view url formatter
+        function convertGDriveViewUrl(url) {
+            if (!url) return '';
+            const gdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (gdMatch) {
+                return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+            }
+            return url;
+        }
+
+        // Logout Session handler
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logoutUser();
+        });
+
+        // Sidebar responsive handlers
+        window.toggleSidebar = () => {
+            document.getElementById('dash-sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+        };
+
+        window.closeSidebar = () => {
+            document.getElementById('dash-sidebar').classList.remove('open');
+            document.getElementById('sidebar-overlay').classList.remove('open');
+        };
+
+        // Disable standard context menu right-clicks for protection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Disable keyboard shortcuts for developer console and source view to prevent screen recording and inspection
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === "F12" ||
+                (e.ctrlKey && e.shiftKey && e.key === "I") ||
+                (e.ctrlKey && e.shiftKey && e.key === "i") ||
+                (e.ctrlKey && e.shiftKey && e.key === "J") ||
+                (e.ctrlKey && e.shiftKey && e.key === "j") ||
+                (e.ctrlKey && e.key === "u") ||
+                (e.ctrlKey && e.key === "U") ||
+                (e.ctrlKey && e.key === "s") ||
+                (e.ctrlKey && e.key === "S")
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        // Initialize Workspace Page
+        if (!courseId || courseId === 'undefined' || courseId === 'null') {
+            window.location.href = 'courses.html';
+        } else {
+            init();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lectures & Notes — Admin | Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .tab-bar { display: flex; gap: 0; margin-bottom: 24px; background: var(--white); border-radius: 12px; padding: 4px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); max-width: 320px; }
+        .tab-btn { flex: 1; padding: 10px 16px; text-align: center; font-weight: 600; font-size: 0.88rem; cursor: pointer; border-radius: 9px; transition: var(--transition); color: var(--medium-gray); border: none; background: none; }
+        .tab-btn.active { background: var(--deep-maroon); color: white; }
+        .lec-item-admin { display: flex; align-items: flex-start; gap: 16px; padding: 16px 20px; background: var(--white); border-radius: 14px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 12px; transition: var(--transition); }
+        .lec-item-admin:hover { box-shadow: var(--shadow-md); }
+        .lec-num-admin { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,var(--navy-blue),var(--deep-maroon)); color:white; display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;flex-shrink:0; }
+        .lec-info-admin { flex: 1; }
+        .lec-info-admin h4 { font-size: 0.95rem; font-family:'Inter',sans-serif; font-weight:700; color:var(--dark-text); margin-bottom:4px; }
+        .lec-info-admin p { font-size:0.82rem; color:var(--medium-gray); }
+        .lec-url { font-size:0.78rem; color:var(--medium-gray); font-family:monospace; background:var(--soft-cream); padding:4px 8px; border-radius:6px; margin-top:6px; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
+        .note-item-admin { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 10px; }
+        .note-icon-admin { width: 40px; height: 40px; border-radius: 10px; background: rgba(239,68,68,0.1); display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.1rem;flex-shrink:0; }
+        .lec-actions { display: flex; gap: 8px; flex-shrink:0; }
+        .lec-actions .btn { font-size:0.78rem; padding:6px 12px; min-height:unset; border-radius:8px; }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html" class="active"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Lectures &amp; Notes</h1>
+                </div>
+                <div class="dash-topbar-right"><div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div></div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+                <!-- Course Selector -->
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+                    <div class="form-group" style="margin:0;flex:1;max-width:320px;">
+                        <select id="course-select" class="form-select" onchange="loadCourseContent()">
+                            <option value="">Select a course to manage...</option>
+                        </select>
+                    </div>
+                    <div id="add-btns" style="display:none;display:flex;gap:10px;">
+                        <button class="btn btn-primary" id="add-lec-btn" onclick="openModal('add-lec-modal')"><i class="fas fa-plus"></i> Add Lecture</button>
+                        <button class="btn btn-gold" id="add-note-btn" onclick="openModal('add-note-modal')"><i class="fas fa-plus"></i> Add Notes</button>
+                    </div>
+                </div>
+
+                <div id="no-course-sel" style="background:var(--white);border-radius:16px;padding:48px;text-align:center;color:var(--medium-gray);box-shadow:var(--shadow-sm);border:1px solid var(--border);">
+                    <i class="fas fa-book-open" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+                    <p>Select a course above to manage its lectures and notes.</p>
+                </div>
+
+                <div id="course-content" style="display:none;">
+                    <!-- Tab Bar -->
+                    <div class="tab-bar">
+                        <button class="tab-btn active" id="tab-lec" onclick="switchTab('lec')"><i class="fas fa-video"></i> Lectures</button>
+                        <button class="tab-btn" id="tab-note" onclick="switchTab('note')"><i class="fas fa-file-pdf"></i> Notes</button>
+                    </div>
+
+                    <!-- Lectures Tab -->
+                    <div id="panel-lec">
+                        <div id="lec-loading" class="loading-state"><div class="spinner"></div></div>
+                        <div id="lec-list"></div>
+                        <div id="no-lec" class="empty-state" style="display:none;"><i class="fas fa-video"></i><h3>No Lectures Yet</h3><p>Add your first lecture for this course.</p></div>
+                    </div>
+
+                    <!-- Notes Tab -->
+                    <div id="panel-note" style="display:none;">
+                        <div id="note-loading" class="loading-state"><div class="spinner"></div></div>
+                        <div id="note-list"></div>
+                        <div id="no-note" class="empty-state" style="display:none;"><i class="fas fa-file-pdf"></i><h3>No Notes Yet</h3><p>Add study materials for this course.</p></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Lecture Modal -->
+    <div class="modal-overlay" id="add-lec-modal">
+        <div class="modal">
+            <div class="modal-header"><h3>Add Lecture</h3><button class="modal-close" onclick="closeModal('add-lec-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="add-lec-alert" class="alert" style="display:none;"></div>
+                <form id="add-lec-form" onsubmit="handleAddLec(event)">
+                    <div class="form-group"><label class="form-label">Lecture Title <span class="required">*</span></label><input type="text" id="lec-title" class="form-input" placeholder="e.g. Introduction to UGC-NET Paper 1" required></div>
+                    <div class="form-group"><label class="form-label">Google Drive Video URL <span class="required">*</span></label><input type="url" id="lec-url" class="form-input" placeholder="https://drive.google.com/file/d/FILE_ID/view" required><p class="form-hint">Paste the Google Drive shareable link. Make sure it is set to "Anyone with link can view".</p></div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea id="lec-desc" class="form-textarea" placeholder="Optional brief description..." rows="2"></textarea></div>
+                    <div class="form-group"><label class="form-label">Order / Position <span class="required">*</span></label><input type="number" id="lec-order" class="form-input" placeholder="1" min="1" value="1" required></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('add-lec-modal')">Cancel</button><button class="btn btn-primary" onclick="document.getElementById('add-lec-form').requestSubmit()" id="save-lec-btn"><i class="fas fa-plus"></i> Add Lecture</button></div>
+        </div>
+    </div>
+
+    <!-- Edit Lecture Modal -->
+    <div class="modal-overlay" id="edit-lec-modal">
+        <div class="modal">
+            <div class="modal-header"><h3>Edit Lecture</h3><button class="modal-close" onclick="closeModal('edit-lec-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="edit-lec-alert" class="alert" style="display:none;"></div>
+                <form id="edit-lec-form" onsubmit="handleEditLec(event)">
+                    <input type="hidden" id="edit-lec-id">
+                    <div class="form-group"><label class="form-label">Lecture Title <span class="required">*</span></label><input type="text" id="edit-lec-title" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Google Drive Video URL <span class="required">*</span></label><input type="url" id="edit-lec-url" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea id="edit-lec-desc" class="form-textarea" rows="2"></textarea></div>
+                    <div class="form-group"><label class="form-label">Order</label><input type="number" id="edit-lec-order" class="form-input" min="1"></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('edit-lec-modal')">Cancel</button><button class="btn btn-primary" onclick="document.getElementById('edit-lec-form').requestSubmit()"><i class="fas fa-save"></i> Save</button></div>
+        </div>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div class="modal-overlay" id="add-note-modal">
+        <div class="modal">
+            <div class="modal-header"><h3>Add Notes / PDF</h3><button class="modal-close" onclick="closeModal('add-note-modal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div id="add-note-alert" class="alert" style="display:none;"></div>
+                <form id="add-note-form" onsubmit="handleAddNote(event)">
+                    <div class="form-group"><label class="form-label">Title <span class="required">*</span></label><input type="text" id="note-title" class="form-input" placeholder="e.g. Paper 1 Notes - Unit 1" required></div>
+                    <div class="form-group"><label class="form-label">Google Drive PDF URL <span class="required">*</span></label><input type="url" id="note-url" class="form-input" placeholder="https://drive.google.com/file/d/FILE_ID/view" required><p class="form-hint">Paste the Google Drive link. Must be set to "Anyone with link can view".</p></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('add-note-modal')">Cancel</button><button class="btn btn-gold" onclick="document.getElementById('add-note-form').requestSubmit()"><i class="fas fa-plus"></i> Add Notes</button></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm -->
+    <div class="modal-overlay" id="del-modal"><div class="modal" style="max-width:400px;"><div class="modal-header"><h3 id="del-title">Confirm Delete</h3><button class="modal-close" onclick="closeModal('del-modal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> This cannot be undone.</div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('del-modal')">Cancel</button><button class="btn btn-danger" id="confirm-del-btn"><i class="fas fa-trash"></i> Delete</button></div></div></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import { getCourses, getLectures, getNotes, addLecture, updateLecture, deleteLecture, addNote, deleteNote } from '../js/db.js';
+
+        let currentCourseId = null;
+        let currentLectures = [], currentNotes = [];
+
+        function toast(msg,type='success'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className=`toast toast-${type}`;t.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
+        function showAlert(id,msg,type='error'){const el=document.getElementById(id);el.className=`alert alert-${type}`;el.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;el.style.display='flex';}
+
+        async function init() {
+            await requireAuth('admin','../login.html');
+            const courses = await getCourses();
+            const sel = document.getElementById('course-select');
+            courses.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.title; sel.appendChild(o); });
+            // Check URL param
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('courseId')) { sel.value = params.get('courseId'); loadCourseContent(); }
+        }
+
+        window.loadCourseContent = async () => {
+            const id = document.getElementById('course-select').value;
+            if (!id) { document.getElementById('no-course-sel').style.display='block'; document.getElementById('course-content').style.display='none'; document.getElementById('add-btns').style.display='none'; return; }
+            currentCourseId = id;
+            document.getElementById('no-course-sel').style.display='none';
+            document.getElementById('course-content').style.display='block';
+            document.getElementById('add-btns').style.display='flex';
+            await refreshLectures();
+            await refreshNotes();
+        };
+
+        async function refreshLectures() {
+            document.getElementById('lec-loading').style.display='block';
+            document.getElementById('lec-list').innerHTML = '';
+            currentLectures = await getLectures(currentCourseId);
+            document.getElementById('lec-loading').style.display='none';
+            if (currentLectures.length === 0) { document.getElementById('no-lec').style.display='block'; return; }
+            document.getElementById('no-lec').style.display='none';
+            currentLectures.forEach((lec, i) => {
+                const div = document.createElement('div');
+                div.className = 'lec-item-admin';
+                div.innerHTML = `
+                    <div class="lec-num-admin">${lec.order || i+1}</div>
+                    <div class="lec-info-admin">
+                        <h4>${lec.title}</h4>
+                        <p>${lec.description || ''}</p>
+                        <span class="lec-url">${lec.videoUrl}</span>
+                    </div>
+                    <div class="lec-actions">
+                        <button class="btn btn-navy btn-sm" onclick="openEditLec('${lec.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="openDel('lec','${lec.id}','lecture')"><i class="fas fa-trash"></i></button>
+                    </div>`;
+                document.getElementById('lec-list').appendChild(div);
+            });
+        }
+
+        async function refreshNotes() {
+            document.getElementById('note-loading').style.display='block';
+            document.getElementById('note-list').innerHTML = '';
+            currentNotes = await getNotes(currentCourseId);
+            document.getElementById('note-loading').style.display='none';
+            if (currentNotes.length === 0) { document.getElementById('no-note').style.display='block'; return; }
+            document.getElementById('no-note').style.display='none';
+            currentNotes.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'note-item-admin';
+                div.innerHTML = `
+                    <div class="note-icon-admin"><i class="fas fa-file-pdf"></i></div>
+                    <div style="flex:1;"><h4 style="font-size:0.9rem;font-family:'Inter',sans-serif;font-weight:700;">${n.title}</h4><span class="lec-url">${n.pdfUrl}</span></div>
+                    <div class="lec-actions">
+                        <a href="${n.pdfUrl}" target="_blank" class="btn btn-gold btn-sm"><i class="fas fa-eye"></i></a>
+                        <button class="btn btn-danger btn-sm" onclick="openDel('note','${n.id}','note')"><i class="fas fa-trash"></i></button>
+                    </div>`;
+                document.getElementById('note-list').appendChild(div);
+            });
+        }
+
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById('panel-lec').style.display = tab==='lec' ? 'block' : 'none';
+            document.getElementById('panel-note').style.display = tab==='note' ? 'block' : 'none';
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        };
+
+        window.handleAddLec = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('save-lec-btn');
+            btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                await addLecture({ courseId: currentCourseId, title: document.getElementById('lec-title').value.trim(), videoUrl: document.getElementById('lec-url').value.trim(), description: document.getElementById('lec-desc').value.trim(), order: parseInt(document.getElementById('lec-order').value) });
+                closeModal('add-lec-modal');
+                document.getElementById('add-lec-form').reset();
+                await refreshLectures();
+                toast('Lecture added!');
+            } catch(err) { showAlert('add-lec-alert', err.message||'Failed.'); }
+            btn.disabled=false; btn.innerHTML='<i class="fas fa-plus"></i> Add Lecture';
+        };
+
+        window.openEditLec = (id) => {
+            const lec = currentLectures.find(l=>l.id===id);
+            if (!lec) return;
+            document.getElementById('edit-lec-id').value = id;
+            document.getElementById('edit-lec-title').value = lec.title;
+            document.getElementById('edit-lec-url').value = lec.videoUrl;
+            document.getElementById('edit-lec-desc').value = lec.description||'';
+            document.getElementById('edit-lec-order').value = lec.order||1;
+            document.getElementById('edit-lec-alert').style.display='none';
+            openModal('edit-lec-modal');
+        };
+
+        window.handleEditLec = async (e) => {
+            e.preventDefault();
+            try {
+                await updateLecture(document.getElementById('edit-lec-id').value, { title: document.getElementById('edit-lec-title').value.trim(), videoUrl: document.getElementById('edit-lec-url').value.trim(), description: document.getElementById('edit-lec-desc').value.trim(), order: parseInt(document.getElementById('edit-lec-order').value) });
+                closeModal('edit-lec-modal');
+                await refreshLectures();
+                toast('Lecture updated!');
+            } catch(err) { showAlert('edit-lec-alert', err.message||'Failed.'); }
+        };
+
+        window.handleAddNote = async (e) => {
+            e.preventDefault();
+            try {
+                await addNote({ courseId: currentCourseId, title: document.getElementById('note-title').value.trim(), pdfUrl: document.getElementById('note-url').value.trim() });
+                closeModal('add-note-modal');
+                document.getElementById('add-note-form').reset();
+                await refreshNotes();
+                toast('Notes added!');
+            } catch(err) { showAlert('add-note-alert', err.message||'Failed.'); }
+        };
+
+        let delType='', delId='';
+        window.openDel = (type, id, label) => { delType=type; delId=id; document.getElementById('del-title').textContent=`Delete ${label}`; openModal('del-modal'); };
+        document.getElementById('confirm-del-btn').onclick = async () => {
+            try {
+                if (delType==='lec') { await deleteLecture(delId); await refreshLectures(); }
+                else { await deleteNote(delId); await refreshNotes(); }
+                closeModal('del-modal');
+                toast('Deleted.');
+            } catch(e) { toast('Failed.','error'); }
+        };
+
+        window.openModal = id => document.getElementById(id).classList.add('active');
+        window.closeModal = id => document.getElementById(id).classList.remove('active');
+        document.getElementById('logout-btn').addEventListener('click', async e => { e.preventDefault(); await logoutUser(); });
+        window.toggleSidebar = () => { document.getElementById('dash-sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('open'); };
+        window.closeSidebar = () => { document.getElementById('dash-sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); };
+        init();
+    </script>
+</body>
+</html>

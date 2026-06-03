@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        function hasLoginCookie() {
+            return document.cookie.split('; ').some(c => c === 'logged_in=true');
+        }
+        if (!hasLoginCookie()) {
+            window.location.replace('../login.html');
+        }
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                if (!hasLoginCookie()) {
+                    window.location.replace('../login.html');
+                }
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management — Admin | Pariksha Parikrama</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: #f0f2f5; }
+        .coupon-info-banner { background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon)); border-radius: 16px; padding: 24px 28px; color: white; margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
+        .coupon-info-banner .icon { font-size: 2.5rem; opacity: 0.7; }
+        .coupon-info-banner h3 { font-size: 1.1rem; margin-bottom: 6px; }
+        .coupon-info-banner p { color: rgba(255,255,255,0.7); font-size: 0.88rem; line-height: 1.6; }
+        .coupon-code-display { font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; background: rgba(0,0,0,0.15); padding: 6px 14px; border-radius: 8px; color: var(--warm-gold); }
+        .coupon-used { background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); }
+        .coupon-available { background: rgba(34,197,94,0.06); border: 1px dashed rgba(34,197,94,0.3); }
+        .generate-area { background: var(--white); border-radius: 16px; padding: 28px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin-bottom: 24px; }
+        .generate-area h3 { font-size: 1rem; font-family:'Inter',sans-serif; font-weight:700; color:var(--navy-blue); margin-bottom:20px; display:flex;align-items:center;gap:8px; }
+        .generate-area h3 i { color:var(--warm-gold); }
+        .generate-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: flex-end; }
+        .generated-code-display { display: flex; align-items: center; gap: 12px; background: var(--soft-cream); border: 2px dashed var(--warm-gold); border-radius: 12px; padding: 16px 20px; margin-top: 16px; }
+        .generated-code-display .code { font-family: monospace; font-size: 1.4rem; font-weight: 700; letter-spacing: 5px; color: var(--navy-blue); }
+        .copy-btn { padding: 8px 16px; background: var(--navy-blue); color:white; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; border:none; transition:var(--transition); }
+        .copy-btn:hover { background: var(--deep-maroon); }
+        @media (max-width: 640px) { .generate-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="mobile-nav-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="dash-wrapper">
+        <aside class="dash-sidebar" id="dash-sidebar">
+            <div class="dash-sidebar-logo"><span class="logo-text">PARIKSHA PARIKRAMA</span><span>Admin Panel</span></div>
+            <nav class="dash-nav">
+                <div class="dash-nav-label">Overview</div>
+                <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <div class="dash-nav-label">Management</div>
+                <a href="students.html"><i class="fas fa-users"></i> Students</a>
+                <a href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                <a href="lectures.html"><i class="fas fa-video"></i> Lectures &amp; Notes</a>
+                <a href="announcements.html"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="coupon-management.html" class="active"><i class="fas fa-ticket-alt"></i> Coupons</a>
+            </nav>
+            <div class="dash-sidebar-footer"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-topbar-left">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h1>Coupon Management</h1>
+                </div>
+                <div class="dash-topbar-right"><div class="topbar-avatar" style="background:linear-gradient(135deg,#b45309,#92400e);">A</div></div>
+            </div>
+            <div class="dash-content">
+                <div id="toast-container"></div>
+
+                <!-- How it works -->
+                <div class="coupon-info-banner">
+                    <i class="fas fa-ticket-alt icon"></i>
+                    <div>
+                        <h3>Course Access Coupons</h3>
+                        <p>Generate a unique one-time coupon code for a specific course. Share it with the student. When they redeem it, they'll be automatically enrolled in that course. Each coupon can only be used once.</p>
+                    </div>
+                </div>
+
+                <!-- Generate Coupon -->
+                <div class="generate-area">
+                    <h3><i class="fas fa-magic"></i> Generate New Coupon</h3>
+                    <div id="gen-alert" class="alert" style="display:none;"></div>
+                    <div class="generate-row">
+                        <div class="form-group" style="margin:0;">
+                            <label class="form-label">Select Course <span class="required">*</span></label>
+                            <select id="gen-course" class="form-select">
+                                <option value="">Choose a course...</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label class="form-label">Custom Code (optional)</label>
+                            <input type="text" id="gen-custom-code" class="form-input" placeholder="Leave blank to auto-generate" style="text-transform:uppercase;letter-spacing:2px;">
+                        </div>
+                        <button class="btn btn-primary" id="gen-btn" onclick="generateCoupon()"><i class="fas fa-magic"></i> Generate</button>
+                    </div>
+                    <!-- Generated code display -->
+                    <div id="gen-result" class="generated-code-display" style="display:none;">
+                        <div>
+                            <p style="font-size:0.78rem;color:var(--medium-gray);margin-bottom:6px;">Generated Coupon Code:</p>
+                            <span class="code" id="gen-code-display">—</span>
+                            <p style="font-size:0.78rem;color:var(--medium-gray);margin-top:6px;" id="gen-course-label">—</p>
+                        </div>
+                        <button class="copy-btn" onclick="copyCode()"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-strip" style="margin-bottom:24px;">
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(20,33,61,0.1);color:var(--navy-blue);"><i class="fas fa-ticket-alt"></i></div><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total Coupons</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,0.12);color:#15803d;"><i class="fas fa-check-circle"></i></div><div class="stat-value" id="stat-available">—</div><div class="stat-label">Available</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.12);color:#b91c1c;"><i class="fas fa-times-circle"></i></div><div class="stat-value" id="stat-used">—</div><div class="stat-label">Used</div></div>
+                </div>
+
+                <!-- Coupon Table -->
+                <div style="background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow:hidden;">
+                    <div id="loading" class="loading-state"><div class="spinner"></div></div>
+                    <div class="table-wrap" id="table-wrap" style="display:none;">
+                        <table>
+                            <thead><tr><th>Coupon Code</th><th>Course</th><th>Status</th><th>Used By</th><th>Created</th><th>Actions</th></tr></thead>
+                            <tbody id="coupons-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="empty-state" class="empty-state" style="display:none;"><i class="fas fa-ticket-alt"></i><h3>No Coupons Yet</h3><p>Generate your first coupon above.</p></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Confirm -->
+    <div class="modal-overlay" id="del-modal"><div class="modal" style="max-width:400px;"><div class="modal-header"><h3>Delete Coupon</h3><button class="modal-close" onclick="closeModal('del-modal')"><i class="fas fa-times"></i></button></div><div class="modal-body"><div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> This will permanently delete this coupon.</div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('del-modal')">Cancel</button><button class="btn btn-danger" id="confirm-del"><i class="fas fa-trash"></i> Delete</button></div></div></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../js/auth.js';
+        import { getCoupons, getCourses, createCoupon, deleteCoupon, generateCouponCode, getStudent } from '../js/db.js';
+
+        let allCoupons = [], allCourses = [], studentCache = {};
+        let generatedCode = '';
+
+        function formatDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+        function toast(msg,type='success'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className=`toast toast-${type}`;t.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
+        function showAlert(id,msg,type='error'){const el=document.getElementById(id);el.className=`alert alert-${type}`;el.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;el.style.display='flex';}
+
+        async function load() {
+            await requireAuth('admin','../login.html');
+            [allCoupons, allCourses] = await Promise.all([getCoupons(), getCourses()]);
+            // Populate course select
+            const sel = document.getElementById('gen-course');
+            allCourses.forEach(c => { const o=document.createElement('option'); o.value=c.id; o.textContent=c.title; sel.appendChild(o); });
+            document.getElementById('loading').style.display='none';
+            renderTable();
+        }
+
+        function getCourseName(id) { return allCourses.find(c=>c.id===id)?.title || '—'; }
+
+        async function getStudentName(uid) {
+            if (!uid) return '—';
+            if (studentCache[uid]) return studentCache[uid];
+            try { const s = await getStudent(uid); if (s) { studentCache[uid] = s.name; return s.name; } } catch(e) {}
+            return uid.substring(0,8)+'...';
+        }
+
+        async function renderTable() {
+            const tbody = document.getElementById('coupons-tbody');
+            tbody.innerHTML = '';
+            const avail = allCoupons.filter(c=>!c.isUsed).length;
+            const used = allCoupons.filter(c=>c.isUsed).length;
+            document.getElementById('stat-total').textContent = allCoupons.length;
+            document.getElementById('stat-available').textContent = avail;
+            document.getElementById('stat-used').textContent = used;
+            if (allCoupons.length === 0) { document.getElementById('table-wrap').style.display='none'; document.getElementById('empty-state').style.display='block'; return; }
+            document.getElementById('table-wrap').style.display='block';
+            document.getElementById('empty-state').style.display='none';
+            for (const cp of allCoupons) {
+                const usedByName = cp.isUsed ? await getStudentName(cp.usedBy) : '—';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="coupon-code-display">${cp.code}</span></td>
+                    <td style="font-size:0.88rem;font-weight:600;">${getCourseName(cp.courseId)}</td>
+                    <td>${cp.isUsed ? '<span class="badge badge-error"><i class="fas fa-times-circle"></i> Used</span>' : '<span class="badge badge-success"><i class="fas fa-check-circle"></i> Available</span>'}</td>
+                    <td style="font-size:0.85rem;">${usedByName}</td>
+                    <td style="font-size:0.82rem;color:var(--medium-gray);">${formatDate(cp.createdAt)}</td>
+                    <td><div class="table-actions">
+                        <button class="btn btn-sm" style="background:var(--soft-cream);color:var(--navy-blue);" onclick="copySpecific('${cp.code}')"><i class="fas fa-copy"></i></button>
+                        ${!cp.isUsed ? `<button class="btn btn-danger btn-sm" onclick="openDel('${cp.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    </div></td>`;
+                tbody.appendChild(tr);
+            }
+        }
+
+        window.generateCoupon = async () => {
+            const courseId = document.getElementById('gen-course').value;
+            if (!courseId) { showAlert('gen-alert','Please select a course.'); return; }
+            document.getElementById('gen-alert').style.display='none';
+            const btn = document.getElementById('gen-btn');
+            btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                const customCode = document.getElementById('gen-custom-code').value.trim().toUpperCase();
+                const code = customCode || generateCouponCode('PP');
+                await createCoupon(code, courseId);
+                generatedCode = code;
+                const course = allCourses.find(c=>c.id===courseId);
+                document.getElementById('gen-code-display').textContent = code;
+                document.getElementById('gen-course-label').textContent = 'For: ' + (course?.title||'—');
+                document.getElementById('gen-result').style.display='flex';
+                document.getElementById('gen-custom-code').value='';
+                allCoupons = await getCoupons();
+                await renderTable();
+                toast('Coupon generated! Share the code with the student.');
+            } catch(err) { showAlert('gen-alert', err.message||'Failed to generate coupon.'); }
+            btn.disabled=false; btn.innerHTML='<i class="fas fa-magic"></i> Generate';
+        };
+
+        window.copyCode = () => {
+            if (generatedCode) { navigator.clipboard.writeText(generatedCode); toast('Code copied to clipboard!'); }
+        };
+        window.copySpecific = (code) => {
+            navigator.clipboard.writeText(code);
+            toast(`Coupon ${code} copied!`);
+        };
+
+        let delId=null;
+        window.openDel = id => { delId=id; document.getElementById('del-modal').classList.add('active'); };
+        document.getElementById('confirm-del').onclick = async () => {
+            if (!delId) return;
+            try { await deleteCoupon(delId); allCoupons=allCoupons.filter(c=>c.id!==delId); document.getElementById('del-modal').classList.remove('active'); await renderTable(); toast('Coupon deleted.'); }
+            catch(e) { toast('Failed.','error'); }
+        };
+
+        window.openModal=id=>document.getElementById(id).classList.add('active');
+        window.closeModal=id=>document.getElementById(id).classList.remove('active');
+        document.getElementById('logout-btn').addEventListener('click',async e=>{e.preventDefault();await logoutUser();});
+        window.toggleSidebar=()=>{document.getElementById('dash-sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');};
+        window.closeSidebar=()=>{document.getElementById('dash-sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');};
+        load();
+    </script>
+</body>
+</html>

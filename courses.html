@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses — Pariksha Parikrama | KSET, UGC-NET, KARTET Preparation</title>
+    <meta name="description" content="Explore our professional exam preparation courses for KSET, UGC-NET, KARTET and Lecturers Exam. Expert mentorship with recorded lectures and study materials.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .page-hero { min-height: 52vh; display: flex; align-items: center; background: linear-gradient(135deg, var(--soft-cream) 0%, #F0EDE5 100%); padding-top: 80px; position: relative; overflow: hidden; }
+        .page-hero::before { content: ''; position: absolute; top: 0; right: 0; width: 45%; height: 100%; background: linear-gradient(135deg, rgba(233,185,73,0.1), rgba(107,30,30,0.1)); clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        .page-hero-content { max-width: 700px; position: relative; z-index: 1; }
+        .page-hero-content h1 { font-size: 3rem; margin-bottom: 16px; background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .page-hero-content p { font-size: 1.15rem; color: var(--medium-gray); margin-bottom: 32px; }
+        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+        .filter-tab { padding: 10px 22px; border-radius: 50px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: 2px solid #e2e8f0; background: var(--white); color: var(--medium-gray); transition: var(--transition); }
+        .filter-tab:hover { border-color: var(--deep-maroon); color: var(--deep-maroon); }
+        .filter-tab.active { background: var(--deep-maroon); border-color: var(--deep-maroon); color: var(--white); }
+        .courses-section { background: var(--soft-cream); }
+        .course-card-public { background: var(--white); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border); transition: var(--transition); display: flex; flex-direction: column; }
+        .course-card-public:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); }
+        .ccp-banner { height: 180px; background: linear-gradient(135deg, var(--navy-blue) 0%, var(--deep-maroon) 100%); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .ccp-banner .big-icon { font-size: 5rem; color: rgba(255,255,255,0.15); }
+        .ccp-banner::after { content: ''; position: absolute; bottom: 0; right: 0; width: 140px; height: 140px; background: rgba(233,185,73,0.12); border-radius: 50%; transform: translate(40%, 40%); }
+        .ccp-cat { position: absolute; top: 16px; left: 16px; background: rgba(233,185,73,0.9); color: var(--navy-blue); font-size: 0.72rem; font-weight: 800; padding: 5px 14px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .ccp-body { padding: 26px 28px; flex: 1; display: flex; flex-direction: column; }
+        .ccp-body h2 { font-size: 1.3rem; color: var(--navy-blue); margin-bottom: 12px; }
+        .ccp-body p { font-size: 0.92rem; color: var(--medium-gray); flex: 1; margin-bottom: 20px; line-height: 1.7; }
+        .ccp-features { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+        .ccp-features li { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--dark-text); }
+        .ccp-features li i { color: var(--warm-gold); width: 16px; text-align: center; }
+        .ccp-actions { display: flex; gap: 12px; }
+        .enroll-cta { background: linear-gradient(135deg, var(--navy-blue), var(--deep-maroon)); color: white; padding: 80px 0; text-align: center; }
+        .enroll-cta h2 { font-size: 2.2rem; margin-bottom: 16px; }
+        .enroll-cta p { color: rgba(255,255,255,0.75); font-size: 1.05rem; margin-bottom: 36px; max-width: 560px; margin-left: auto; margin-right: auto; }
+        .enroll-cta .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        @media (max-width: 768px) { .page-hero-content h1 { font-size: 2.2rem; } }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header" id="main-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo-text">PARIKSHA PARIKRAMA</a>
+                <nav class="site-nav">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="aboutus.html">About</a></li>
+                        <li><a href="courses.html" class="active">Courses</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Student Login</a>
+                    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav-overlay" id="nav-overlay" onclick="closeMobileNav()"></div>
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="mobile-nav-close" onclick="closeMobileNav()"><i class="fas fa-times"></i></button>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="aboutus.html">About</a></li>
+            <li><a href="courses.html">Courses</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="login.html" class="btn btn-primary btn-sm" style="margin-top:16px;">Student Login</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <div class="badge badge-gold" style="margin-bottom:16px;"><i class="fas fa-graduation-cap"></i> Our Programmes</div>
+                <h1>Expert-Curated Courses</h1>
+                <p>Specialised preparation programmes for competitive exams, designed by subject experts with proven methodologies.</p>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;">
+                    <a href="login.html" class="btn btn-primary"><i class="fas fa-play-circle"></i> Access Lectures</a>
+                    <a href="https://wa.me/917795606528?text=Hi, I want to know more about the courses at Pariksha Parikrama" target="_blank" class="btn btn-secondary"><i class="fab fa-whatsapp"></i> Enquire Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses-section">
+        <div class="container">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs" id="filter-tabs">
+                <button class="filter-tab active" onclick="filterCourses('all',this)">All Courses</button>
+                <button class="filter-tab" onclick="filterCourses('KSET',this)">KSET</button>
+                <button class="filter-tab" onclick="filterCourses('UGC-NET',this)">UGC-NET</button>
+                <button class="filter-tab" onclick="filterCourses('KARTET',this)">KARTET</button>
+                <button class="filter-tab" onclick="filterCourses('Lecturers Exam',this)">Lecturers Exam</button>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="loading-state"><div class="spinner"></div><p style="margin-top:16px;color:var(--medium-gray);">Loading courses...</p></div>
+
+            <!-- Course Grid -->
+            <div class="course-grid" id="course-grid" style="display:none;"></div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display:none;">
+                <i class="fas fa-book-open"></i>
+                <h3>No Courses Available Yet</h3>
+                <p>New courses are being added. Contact us on WhatsApp to know more.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enroll CTA -->
+    <div class="enroll-cta">
+        <div class="container">
+            <h2>Ready to Start Your Preparation?</h2>
+            <p>Join our expert-led programmes and take the next step towards clearing your dream exam.</p>
+            <div class="cta-btns">
+                <a href="login.html" class="btn btn-gold btn-lg"><i class="fas fa-user-plus"></i> Create Account</a>
+                <a href="https://wa.me/917795606528?text=Hi, I want to enroll in a course at Pariksha Parikrama" target="_blank" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);"><i class="fab fa-whatsapp"></i> Chat with Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">PARIKSHA <span>PARIKRAMA</span></div>
+                    <p>Guiding minds, shaping futures through personalised mentorship for competitive exams.</p>
+                    <div class="footer-socials">
+                        <a href="https://youtube.com/@parikshaparikrama" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/parikshaparikrama" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share/1Zv7dHxQeg/" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://wa.me/917795606528" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="aboutus.html"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Courses</a></li>
+                        <li><a href="contact.html"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        <li><a href="login.html"><i class="fas fa-chevron-right"></i> Student Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Courses</h4>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> KSET</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> UGC-NET</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> KARTET</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Lecturers Exam</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Makali, Tumkur Road, Nelamangala, Bangalore – 562123</span></div>
+                    <div class="footer-contact-item"><i class="fas fa-phone"></i><span>+91 7795606528</span></div>
+                    <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>parikshaparikrama@gmail.com</span></div>
+                    <div class="footer-contact-item"><i class="fas fa-clock"></i><span>Mon–Sat: 9:00 AM – 9:00 PM</span></div>
+                </div>
+            </div>
+            <div class="footer-bottom"><p>© 2025 Pariksha Parikrama. All rights reserved.</p></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { getCourses } from './js/db.js';
+
+        let allCourses = [];
+        const icons = {'KSET':'🎓','UGC-NET':'📘','KARTET':'📝','Lecturers Exam':'🏛️','General':'📚'};
+        const features = {
+            'KSET': ['In-depth subject knowledge', 'Previous year papers', 'Mock tests & revision', 'Expert mentors'],
+            'UGC-NET': ['Paper 1 & Paper 2 coverage', 'Research methodology', 'Teaching aptitude', 'Mock tests'],
+            'KARTET': ['Child development modules', 'Language & maths pedagogy', 'Practice tests', 'Revision sessions'],
+            'Lecturers Exam': ['Subject mastery', 'Exam strategy', 'Previous year analysis', 'Mock tests'],
+            'General': ['Structured learning', 'Expert guidance', 'Study materials', 'Mock tests']
+        };
+
+        function renderCourses(courses) {
+            const grid = document.getElementById('course-grid');
+            grid.innerHTML = '';
+            if (courses.length === 0) { grid.style.display='none'; document.getElementById('empty-state').style.display='block'; return; }
+            grid.style.display = 'grid';
+            document.getElementById('empty-state').style.display = 'none';
+            courses.forEach(c => {
+                const feats = features[c.category] || features['General'];
+                const card = document.createElement('div');
+                card.className = 'course-card-public';
+                card.innerHTML = `
+                    <div class="ccp-banner">
+                        <span class="ccp-cat">${c.category||'Course'}</span>
+                        <span class="big-icon">${icons[c.category]||'📚'}</span>
+                    </div>
+                    <div class="ccp-body">
+                        <h2>${c.title}</h2>
+                        <p>${c.description || 'A comprehensive preparation programme designed to help you excel in your competitive exam.'}</p>
+                        <ul class="ccp-features">
+                            ${feats.map(f=>`<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+                        </ul>
+                        <div class="ccp-actions">
+                            <a href="login.html" class="btn btn-primary" style="flex:1;"><i class="fas fa-play-circle"></i> Access Course</a>
+                            <a href="https://wa.me/917795606528?text=Hi, I want to know more about the ${encodeURIComponent(c.title)} course" target="_blank" class="btn btn-secondary"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        window.filterCourses = (cat, btn) => {
+            document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCourses(cat==='all' ? allCourses : allCourses.filter(c=>c.category===cat));
+        };
+
+        async function init() {
+            try {
+                allCourses = await getCourses();
+            } catch(e) {
+                // Fallback static courses if Firebase not configured
+                allCourses = [
+                    { id:'1', title:'KSET Preparation 2026', category:'KSET', description:'Comprehensive KSET preparation covering all subjects with expert faculty guidance, practice tests, and study materials.' },
+                    { id:'2', title:'UGC-NET June 2026', category:'UGC-NET', description:'Complete UGC-NET preparation covering Paper 1 and Paper 2 with strategic guidance and previous year analysis.' },
+                    { id:'3', title:'KARTET Preparation', category:'KARTET', description:'Karnataka TET preparation covering child development, pedagogy, language and mathematics modules.' },
+                    { id:'4', title:'Lecturers Exam Preparation', category:'Lecturers Exam', description:'Comprehensive Lecturers Exam preparation with subject mastery, exam strategy, and mock test series.' }
+                ];
+            }
+            document.getElementById('loading').style.display='none';
+            renderCourses(allCourses);
+        }
+
+        // Mobile Nav
+        window.toggleMobileNav = () => {
+            document.getElementById('mobile-nav').classList.toggle('open');
+            document.getElementById('nav-overlay').classList.toggle('open');
+        };
+        window.closeMobileNav = () => {
+            document.getElementById('mobile-nav').classList.remove('open');
+            document.getElementById('nav-overlay').classList.remove('open');
+        };
+
+        // Header scroll
+        window.addEventListener('scroll', () => {
+            const h = document.getElementById('main-header');
+            h.style.padding = window.scrollY > 80 ? '8px 0' : '12px 0';
+        });
+
+        init();
+    </script>
+</body>
+</html>
