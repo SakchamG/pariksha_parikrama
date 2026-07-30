@@ -1011,6 +1011,152 @@
             background-color: var(--white);
         }
 
+        /* ── Success Photo Slideshow ── */
+        .success-slideshow {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 50px;
+            border-radius: 22px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            box-shadow:
+                0 0 0 3px rgba(233,185,73,0.3),
+                0 25px 60px rgba(107,30,30,0.18);
+            animation: glow-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-ring {
+            0%,100% { box-shadow: 0 0 0 3px rgba(233,185,73,0.25), 0 25px 60px rgba(107,30,30,0.15); }
+            50%      { box-shadow: 0 0 0 6px rgba(233,185,73,0.55), 0 30px 70px rgba(107,30,30,0.25); }
+        }
+
+        .success-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 1;
+        }
+        .success-slide.active { opacity: 1; z-index: 2; }
+
+        .success-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Ken Burns zoom */
+            animation: ken-burns 6s ease-in-out infinite alternate;
+        }
+        .success-slide:not(.active) img { animation: none; }
+
+        @keyframes ken-burns {
+            from { transform: scale(1);    transform-origin: 30% 60%; }
+            to   { transform: scale(1.12); transform-origin: 70% 40%; }
+        }
+
+        /* dark gradient overlay for legibility */
+        .success-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* counter badge top-right */
+        .success-counter {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 10;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(6px);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(233,185,73,0.4);
+        }
+        .success-counter span { color: var(--warm-gold); }
+
+        /* label bottom-left */
+        .success-label {
+            position: absolute;
+            bottom: 22px;
+            left: 22px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+        .success-label i { color: var(--warm-gold); font-size: 1.1rem; }
+
+        /* dot nav */
+        .success-dots {
+            position: absolute;
+            bottom: 22px;
+            right: 22px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+        .success-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.45);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .success-dot.active {
+            background: var(--warm-gold);
+            border-color: rgba(255,255,255,0.7);
+            transform: scale(1.3);
+        }
+
+        /* prev / next arrows */
+        .success-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(6px);
+            border: 1.5px solid rgba(233,185,73,0.45);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+        .success-slideshow:hover .success-arrow { opacity: 1; }
+        .success-arrow:hover {
+            background: var(--warm-gold);
+            color: var(--navy-blue);
+            border-color: var(--warm-gold);
+        }
+        .success-arrow.s-prev { left: 16px; }
+        .success-arrow.s-next { right: 16px; }
+
+        @media (max-width: 768px) {
+            .success-slideshow { border-radius: 14px; aspect-ratio: 4/3; }
+            .success-arrow { opacity: 1; width: 36px; height: 36px; }
+        }
+
         .testimonial-cards {
             display: grid;
             grid-template-columns: 1fr;
@@ -1630,25 +1776,128 @@
             text-align: left;
         }
 
-        .announcement-banner {
+        /* Announcement Carousel Styling */
+        @keyframes pulse-gold-glow {
+            0% {
+                box-shadow: 0 10px 30px rgba(107, 30, 30, 0.08), 0 0 0 0 rgba(233, 185, 73, 0.3);
+            }
+            70% {
+                box-shadow: 0 10px 30px rgba(107, 30, 30, 0.08), 0 0 0 12px rgba(233, 185, 73, 0);
+            }
+            100% {
+                box-shadow: 0 10px 30px rgba(107, 30, 30, 0.08), 0 0 0 0 rgba(233, 185, 73, 0);
+            }
+        }
+
+        .announcement-carousel-container {
             flex: 0 0 450px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+            background: var(--white);
+            padding: 12px;
+            border-radius: 20px;
+            border: 2px solid rgba(233, 185, 73, 0.25); /* Gold border highlight */
+            animation: pulse-gold-glow 3s infinite;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .announcement-banner:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        .announcement-carousel-container:hover {
+            border-color: var(--warm-gold);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 45px rgba(233, 185, 73, 0.25);
+            animation: none; /* Pause glow while hovered */
         }
 
-        .announcement-banner img {
+        .carousel-badge {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: linear-gradient(135deg, var(--deep-maroon), var(--navy-blue));
+            color: var(--white);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(107, 30, 30, 0.3);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(233, 185, 73, 0.2);
+        }
+
+        .carousel-badge i {
+            color: var(--warm-gold);
+        }
+
+        .announcement-carousel {
+            position: relative;
             width: 100%;
-            height: auto;
+            border-radius: 14px;
+            overflow: hidden;
+            aspect-ratio: 4 / 5; /* Maintain standard flyer aspect ratio */
+            background: #fafafa;
+        }
+
+        .carousel-slides {
+            display: flex;
+            width: 300%; /* 3 slides */
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .carousel-slide {
+            width: 33.3333%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .carousel-slide:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Progress Bar */
+        .carousel-progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(107, 30, 30, 0.1);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .carousel-progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--warm-gold), #ffdf7e, var(--warm-gold));
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .carousel-progress-fill.animating {
+            animation: progressRun 4s linear forwards;
+        }
+
+        @keyframes progressRun {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        /* Pause progress and animation on hover */
+        .announcement-carousel-container:hover .carousel-progress-fill.animating {
+            animation-play-state: paused;
         }
 
         .announcement-overlay-text {
@@ -1664,6 +1913,89 @@
             font-size: 0.9rem;
             pointer-events: none;
             opacity: 0.9;
+            z-index: 3;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .carousel-slide:hover .announcement-overlay-text {
+            background: var(--deep-maroon);
+            box-shadow: 0 4px 15px rgba(107, 30, 30, 0.4);
+        }
+
+        /* Navigation Arrows */
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) scale(0.9);
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(233, 185, 73, 0.3);
+            border-radius: 50%;
+            color: var(--deep-maroon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+        }
+
+        .announcement-carousel:hover .carousel-arrow {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .carousel-arrow:hover {
+            background: var(--deep-maroon);
+            color: var(--white);
+            border-color: var(--deep-maroon);
+            box-shadow: 0 6px 18px rgba(107, 30, 30, 0.3);
+        }
+
+        .carousel-arrow.prev {
+            left: 15px;
+        }
+
+        .carousel-arrow.next {
+            right: 15px;
+        }
+
+        /* Pagination Dots */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .carousel-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(107, 30, 30, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dots .dot.active {
+            width: 24px;
+            border-radius: 10px;
+            background: var(--deep-maroon);
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .announcement-details {
@@ -1720,9 +2052,17 @@
                 text-align: center;
             }
 
-            .announcement-banner {
+            .announcement-carousel-container {
                 flex: none;
                 max-width: 100%;
+                width: 100%;
+            }
+
+            .carousel-arrow {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+                width: 38px;
+                height: 38px;
             }
 
             .announcement-features li {
@@ -1926,10 +2266,46 @@
                 <p>Check out our latest update and opportunities</p>
             </div>
             <div class="announcement-content">
-                <div class="announcement-banner" id="announcement-banner">
-                    <img src="anount.jpeg" alt="Special Announcement Flyer">
-                    <div class="announcement-overlay-text">
-                        <i class="fas fa-search-plus"></i> Click to enlarge
+                <div class="announcement-carousel-container">
+                    <span class="carousel-badge"><i class="fas fa-star animate-pulse"></i> LATEST UPDATE</span>
+                    <div class="announcement-carousel" id="announcement-carousel">
+                        <div class="carousel-slides" id="carousel-slides-track">
+                            <div class="carousel-slide" data-index="0" data-src="1.png">
+                                <img src="1.png" alt="Announcement 1">
+                                <div class="announcement-overlay-text">
+                                    <i class="fas fa-search-plus"></i> Click to enlarge
+                                </div>
+                            </div>
+                            <div class="carousel-slide" data-index="1" data-src="2.png">
+                                <img src="2.png" alt="Announcement 2">
+                                <div class="announcement-overlay-text">
+                                    <i class="fas fa-search-plus"></i> Click to enlarge
+                                </div>
+                            </div>
+                            <div class="carousel-slide" data-index="2" data-src="3.png">
+                                <img src="3.png" alt="Announcement 3">
+                                <div class="announcement-overlay-text">
+                                    <i class="fas fa-search-plus"></i> Click to enlarge
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Navigation Arrows -->
+                        <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous slide">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-arrow next" id="carousel-next" aria-label="Next slide">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <!-- Progress Bar -->
+                        <div class="carousel-progress-bar">
+                            <div class="carousel-progress-fill animating" id="carousel-progress-fill"></div>
+                        </div>
+                    </div>
+                    <!-- Pagination Dots -->
+                    <div class="carousel-dots" id="carousel-dots">
+                        <span class="dot active" data-index="0"></span>
+                        <span class="dot" data-index="1"></span>
+                        <span class="dot" data-index="2"></span>
                     </div>
                 </div>
                 <div class="announcement-details">
@@ -2246,8 +2622,57 @@
         <div class="container">
             <div class="section-title">
                 <h2>Student Success Stories</h2>
-                <p>Hear from our students who achieved their dreams</p>
+                <p>Real achievements from our dedicated students</p>
             </div>
+
+            <!-- ── Success Photo Slideshow ── -->
+            <div class="success-slideshow" id="success-slideshow">
+                <!-- Counter -->
+                <div class="success-counter">
+                    <span id="success-current">1</span> / <span id="success-total">5</span>
+                </div>
+
+                <!-- Slides -->
+                <div class="success-slide active" data-index="0">
+                    <img src="success/1.png" alt="Student Success 1" loading="lazy">
+                </div>
+                <div class="success-slide" data-index="1">
+                    <img src="success/2.png" alt="Student Success 2" loading="lazy">
+                </div>
+                <div class="success-slide" data-index="2">
+                    <img src="success/3.png" alt="Student Success 3" loading="lazy">
+                </div>
+                <div class="success-slide" data-index="3">
+                    <img src="success/4.png" alt="Student Success 4" loading="lazy">
+                </div>
+                <div class="success-slide" data-index="4">
+                    <img src="success/5.png" alt="Student Success 5" loading="lazy">
+                </div>
+
+                <!-- Label -->
+                <div class="success-label">
+                    <i class="fas fa-trophy"></i> Our Achievers
+                </div>
+
+                <!-- Dot nav -->
+                <div class="success-dots" id="success-dots">
+                    <span class="success-dot active" data-index="0"></span>
+                    <span class="success-dot" data-index="1"></span>
+                    <span class="success-dot" data-index="2"></span>
+                    <span class="success-dot" data-index="3"></span>
+                    <span class="success-dot" data-index="4"></span>
+                </div>
+
+                <!-- Arrows -->
+                <button class="success-arrow s-prev" id="success-prev" aria-label="Previous">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="success-arrow s-next" id="success-next" aria-label="Next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <!-- ── End Slideshow ── -->
+
             <div class="testimonial-cards">
                 <div class="testimonial-card">
                     <div class="testimonial-text">
@@ -2257,8 +2682,7 @@
                     <div class="testimonial-author">
                         <div class="author-avatar">RS</div>
                         <div>
-                            <h4>Rohit Sharma <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
-                            </h4>
+                            <h4>Rohit Sharma <span class="verified-badge"><i class="fas fa-check"></i> Verified</span></h4>
                             <p>KSET Qualified, 2023</p>
                         </div>
                     </div>
@@ -2284,8 +2708,7 @@
                     <div class="testimonial-author">
                         <div class="author-avatar">AK</div>
                         <div>
-                            <h4>Anil Kumar <span class="verified-badge"><i class="fas fa-check"></i> Verified</span>
-                            </h4>
+                            <h4>Anil Kumar <span class="verified-badge"><i class="fas fa-check"></i> Verified</span></h4>
                             <p>College Lecturer</p>
                         </div>
                     </div>
@@ -2450,7 +2873,7 @@
             <button class="announcement-modal-close" id="announcement-modal-close">
                 <i class="fas fa-times"></i>
             </button>
-            <img src="anount.jpeg" alt="Special Announcement">
+            <img src="anount.jpeg" alt="Special Announcement" id="announcement-modal-img">
         </div>
     </div>
 
@@ -2564,18 +2987,104 @@
         document.querySelectorAll('.course-card, .testimonial-card, .mentor-card, .process-step').forEach(el => {
             el.classList.add('performance-optimized');
         });
-        // Announcement Modal Logic
-        const announcementBanner = document.getElementById('announcement-banner');
+        // Announcement Carousel & Modal Logic
+        const announcementCarousel = document.getElementById('announcement-carousel');
         const announcementModal = document.getElementById('announcement-modal');
+        const announcementModalImg = document.getElementById('announcement-modal-img');
         const announcementClose = document.getElementById('announcement-modal-close');
-
-        if (announcementBanner && announcementModal && announcementClose) {
-            // Open modal
-            announcementBanner.addEventListener('click', function () {
-                announcementModal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+        
+        if (announcementCarousel && announcementModal && announcementModalImg && announcementClose) {
+            const slidesTrack = document.getElementById('carousel-slides-track');
+            const slides = announcementCarousel.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dots .dot');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const progressFill = document.getElementById('carousel-progress-fill');
+            
+            let currentIndex = 0;
+            
+            function showSlide(index) {
+                // Wrap around logic
+                if (index >= slides.length) {
+                    currentIndex = 0;
+                } else if (index < 0) {
+                    currentIndex = slides.length - 1;
+                } else {
+                    currentIndex = index;
+                }
+                
+                // Translate slide track
+                if (slidesTrack) {
+                    slidesTrack.style.transform = `translateX(-${currentIndex * 33.3333}%)`;
+                }
+                
+                // Update active dot
+                dots.forEach((dot, i) => {
+                    if (i === currentIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Reset progress bar animation
+                resetProgressBar();
+            }
+            
+            function nextSlide() {
+                showSlide(currentIndex + 1);
+            }
+            
+            function prevSlide() {
+                showSlide(currentIndex - 1);
+            }
+            
+            function resetProgressBar() {
+                if (progressFill) {
+                    progressFill.classList.remove('animating');
+                    void progressFill.offsetWidth; // Trigger reflow to restart animation
+                    progressFill.classList.add('animating');
+                }
+            }
+            
+            // Auto slide when progress bar animation finishes
+            if (progressFill) {
+                progressFill.addEventListener('animationend', nextSlide);
+            }
+            
+            // Event Listeners for manual navigation
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent opening the modal
+                    nextSlide();
+                });
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent opening the modal
+                    prevSlide();
+                });
+            }
+            
+            // Dot navigation
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent opening the modal
+                    showSlide(i);
+                });
             });
-
+            
+            // Open modal when clicking on any slide
+            slides.forEach((slide) => {
+                slide.addEventListener('click', () => {
+                    const imgSrc = slide.getAttribute('data-src');
+                    announcementModalImg.src = imgSrc;
+                    announcementModal.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                });
+            });
+            
             // Close modal when clicking close button
             announcementClose.addEventListener('click', function () {
                 announcementModal.classList.remove('active');
@@ -2597,7 +3106,53 @@
                     document.body.style.overflow = '';
                 }
             });
+            
+            // Initial call to set up progress bar
+            resetProgressBar();
         }
+
+        // ── Success Photo Slideshow Logic ──
+        (function () {
+            const ss = document.getElementById('success-slideshow');
+            if (!ss) return;
+
+            const slides   = ss.querySelectorAll('.success-slide');
+            const dots     = ss.querySelectorAll('.success-dot');
+            const prevBtn  = document.getElementById('success-prev');
+            const nextBtn  = document.getElementById('success-next');
+            const countEl  = document.getElementById('success-current');
+            const total    = slides.length;
+            let cur        = 0;
+            let timer;
+
+            function goTo(n) {
+                slides[cur].classList.remove('active');
+                dots[cur].classList.remove('active');
+                cur = (n + total) % total;
+                slides[cur].classList.add('active');
+                dots[cur].classList.add('active');
+                if (countEl) countEl.textContent = cur + 1;
+            }
+
+            function startTimer() {
+                clearInterval(timer);
+                timer = setInterval(() => goTo(cur + 1), 3500);
+            }
+
+            // Arrow controls
+            if (nextBtn) nextBtn.addEventListener('click', e => { e.stopPropagation(); goTo(cur + 1); startTimer(); });
+            if (prevBtn) prevBtn.addEventListener('click', e => { e.stopPropagation(); goTo(cur - 1); startTimer(); });
+
+            // Dot controls
+            dots.forEach((d, i) => d.addEventListener('click', e => { e.stopPropagation(); goTo(i); startTimer(); }));
+
+            // Pause on hover
+            ss.addEventListener('mouseenter', () => clearInterval(timer));
+            ss.addEventListener('mouseleave', startTimer);
+
+            // Kick off
+            startTimer();
+        })();
     </script>
 </body>
 
